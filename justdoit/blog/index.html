@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Just Do It 的博客</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 {
+            margin: 0;
+        }
+        header button {
+            background-color: #555;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            display: none; /* 默认隐藏返回按钮 */
+        }
+        #search-container {
+            margin: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        #search {
+            padding: 10px;
+            width: calc(100% - 130px);
+            max-width: 400px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #search-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #search-button:hover {
+            background-color: #0056b3;
+        }
+        #blog-list {
+            margin: 20px;
+        }
+        .blog-item {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        .blog-item h2 {
+            margin: 0 0 10px 0;
+        }
+        .blog-item p {
+            margin: 0;
+            color: #666;
+        }
+        #loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-size: 24px;
+        }
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        #modal {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        #modal button {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Just Do It 的博客</h1>
+        <button id="back-button" onclick="goBackToHome()">返回首页</button>
+    </header>
+    <div id="search-container">
+        <input type="text" id="search" placeholder="搜索文章...">
+        <button id="search-button" onclick="handleSearch()">搜索</button>
+    </div>
+    <div id="blog-list"></div>
+    <div id="loading">加载中...</div>
+    <div id="overlay">
+        <div id="modal">
+            <p>作者还没有声明版权，但请不要复制文章。</p>
+            <button onclick="closeModal()">我知道了</button>
+        </div>
+    </div>
+
+    <script>
+        const giteeUser = 'damian2021';
+        const accessToken = 'b5a96c2df3774e1a8ded0ff0cc54cdfa';
+        const repo = 'blog';
+        const folder = 'justdoit';
+
+        let allBlogs = []; // 存储所有博客数据
+
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchBlogList();
+        });
+
+        async function fetchBlogList() {
+            const url = `https://gitee.com/api/v5/repos/${giteeUser}/${repo}/contents/${folder}`;
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `token ${accessToken}`
+                    }
+                });
+                const data = await response.json();
+                allBlogs = data.filter(blog => blog.name.endsWith('.md')); // 只保留 Markdown 文件
+                displayBlogList(allBlogs);
+            } catch (error) {
+                console.error('Error fetching blog list:', error);
+            } finally {
+                document.getElementById('loading').style.display = 'none'; // 隐藏加载动画
+            }
+        }
+
+        function displayBlogList(blogs) {
+            const blogList = document.getElementById('blog-list');
+            blogList.innerHTML = ''; // 清空当前列表
+            blogs.forEach(blog => {
+                const blogItem = document.createElement('div');
+                blogItem.className = 'blog-item';
+                blogItem.innerHTML = `<h2>${blog.name.replace('.md', '')}</h2><p>${blog.path}</p>`;
+                blogItem.addEventListener('click', () => fetchBlogContent(blog.path));
+                blogList.appendChild(blogItem);
+            });
+        }
+
+        async function fetchBlogContent(path) {
+            const url = `https://gitee.com/api/v5/repos/${giteeUser}/${repo}/contents/${path}`;
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `token ${accessToken}`
+                    }
+                });
+                const data = await response.json();
+                displayBlogContent(atob(data.content));
+                document.getElementById('back-button').style.display = 'block'; // 显示返回按钮
+            } catch (error) {
+                console.error('Error fetching blog content:', error);
+            }
+        }
+
+        function displayBlogContent(content) {
+            const blogList = document.getElementById('blog-list');
+            blogList.innerHTML = `<div class="blog-item"><pre>${content}</pre></div>`;
+        }
+
+        function handleSearch() {
+            const searchInput = document.getElementById('search').value.toLowerCase();
+            const filteredBlogs = allBlogs.filter(blog => 
+                blog.name.toLowerCase().includes(searchInput) || 
+                blog.path.toLowerCase().includes(searchInput)
+            );
+            displayBlogList(filteredBlogs);
+        }
+
+        function goBackToHome() {
+            window.location.reload(); // 刷新页面以返回首页
+        }
+
+        function closeModal() {
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        document.addEventListener('copy', function(e) {
+            e.preventDefault();
+            alert('复制功能已禁用。');
+        });
+    </script>
+</body>
+</html>
