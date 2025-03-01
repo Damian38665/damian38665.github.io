@@ -46,6 +46,7 @@
             margin: 0;
             flex: 1;
             white-space: nowrap; /* 防止标题换行 */
+            font-size: 1.2em; /* 手机端标题字体大小 */
         }
         header button {
             background-color: #555;
@@ -56,6 +57,7 @@
             display: none; /* 默认隐藏返回按钮 */
             margin-left: 10px; /* 确保按钮不被遮挡 */
             white-space: nowrap; /* 防止按钮文字换行 */
+            font-size: 0.9em; /* 手机端按钮字体大小 */
         }
         #archive-container {
             display: flex;
@@ -72,16 +74,28 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
             white-space: nowrap; /* 防止文件夹名称换行 */
+            font-size: 0.9em; /* 手机端文件夹字体大小 */
         }
         .archive-folder:hover {
             background-color: #0056b3;
+        }
+        #quote {
+            margin: 20px;
+            margin-top: 80px; /* 为顶部栏留出空间 */
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            font-size: 1.1em;
+            color: #333;
         }
         #search-container {
             margin: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-top: 80px; /* 为顶部栏留出空间 */
+            margin-top: 20px; /* 为顶部栏留出空间 */
         }
         #search {
             padding: 10px;
@@ -90,6 +104,7 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             transition: all 0.3s ease;
+            font-size: 1em;
         }
         #search:focus {
             border-color: #007bff;
@@ -103,13 +118,14 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            font-size: 1em;
         }
         #search-button:hover {
             background-color: #0056b3;
         }
         #blog-list {
             margin: 20px;
-            margin-top: 100px; /* 为顶部栏留出空间 */
+            margin-top: 20px; /* 为顶部栏留出空间 */
         }
         .blog-item {
             background-color: rgba(255, 255, 255, 0.9);
@@ -173,6 +189,7 @@
             border-radius: 10px;
             text-align: center;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            max-width: 90%; /* 手机端弹窗宽度限制 */
         }
         #modal button {
             margin-top: 10px;
@@ -184,7 +201,11 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
-        #modal button:hover {
+        #modal button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        #modal button:hover:not(:disabled) {
             background-color: #0056b3;
         }
         #blog-content {
@@ -236,6 +257,36 @@
         a:hover {
             text-decoration: underline;
         }
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1em; /* 手机端标题字体大小 */
+            }
+            header button {
+                font-size: 0.8em; /* 手机端按钮字体大小 */
+                padding: 5px 8px;
+            }
+            .archive-folder {
+                font-size: 0.8em; /* 手机端文件夹字体大小 */
+                padding: 5px 8px;
+            }
+            #quote {
+                font-size: 1em; /* 手机端名言字体大小 */
+                padding: 15px;
+            }
+            #search {
+                font-size: 0.9em; /* 手机端搜索框字体大小 */
+            }
+            #search-button {
+                font-size: 0.9em; /* 手机端搜索按钮字体大小 */
+                padding: 8px 16px;
+            }
+            .blog-item h2 {
+                font-size: 1.2em; /* 手机端文章标题字体大小 */
+            }
+            .blog-item p {
+                font-size: 0.9em; /* 手机端文章描述字体大小 */
+            }
+        }
     </style>
 </head>
 <body>
@@ -244,6 +295,7 @@
         <div id="archive-container"></div>
         <button id="back-button" onclick="goBackToHome()">返回首页</button>
     </header>
+    <div id="quote"></div>
     <div id="search-container">
         <input type="text" id="search" placeholder="搜索文章...">
         <button id="search-button" onclick="handleSearch()">搜索</button>
@@ -255,8 +307,8 @@
     </div>
     <div id="overlay">
         <div id="modal">
-            <p>欢迎来到我的博客(≧▽≦)</p>
-            <button onclick="closeModal()">我知道了</button>
+            <p id="modal-content">加载中...</p>
+            <button id="modal-button" onclick="closeModal()" disabled>我知道了</button>
         </div>
     </div>
 
@@ -269,10 +321,57 @@
         let allBlogs = []; // 存储所有博客数据
         let archiveFolders = []; // 存储归档文件夹
 
+        // 随机古诗文和名言
+        const quotes = [
+            "山重水复疑无路，柳暗花明又一村。",
+            "人生自古谁无死，留取丹心照汗青。",
+            "书籍是人类进步的阶梯。",
+            "成功是失败之母。",
+            "天行健，君子以自强不息。",
+            "不积跬步，无以至千里；不积小流，无以成江海。",
+            "知识就是力量。",
+            "读万卷书，行万里路。",
+            "业精于勤，荒于嬉；行成于思，毁于随。",
+            "千里之行，始于足下。"
+        ];
+
         document.addEventListener('DOMContentLoaded', function() {
             fetchBlogList();
             fetchArchiveFolders();
+            fetchModalContent();
+            showRandomQuote();
         });
+
+        // 显示随机古诗文或名言
+        function showRandomQuote() {
+            const quoteDiv = document.getElementById('quote');
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            quoteDiv.textContent = randomQuote;
+        }
+
+        // 从 tt.txt 加载弹窗内容
+        async function fetchModalContent() {
+            const url = `https://gitee.com/api/v5/repos/${giteeUser}/${repo}/contents/${folder}/tt.txt`;
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `token ${accessToken}`
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                const content = decodeBase64(data.content); // 解码 Base64
+                document.getElementById('modal-content').textContent = content;
+            } catch (error) {
+                console.error('Error fetching modal content:', error);
+                document.getElementById('modal-content').textContent = '欢迎来到我的博客(≧▽≦)';
+            } finally {
+                // 加载完成后启用按钮
+                document.getElementById('modal-button').disabled = false;
+            }
+        }
 
         async function fetchBlogList(path = folder) {
             const url = `https://gitee.com/api/v5/repos/${giteeUser}/${repo}/contents/${path}`;
@@ -322,7 +421,10 @@
                 const folderDiv = document.createElement('div');
                 folderDiv.className = 'archive-folder';
                 folderDiv.textContent = folder.name;
-                folderDiv.addEventListener('click', () => fetchBlogList(folder.path));
+                folderDiv.addEventListener('click', () => {
+                    fetchBlogList(folder.path);
+                    document.getElementById('back-button').style.display = 'block'; // 显示返回按钮
+                });
                 archiveContainer.appendChild(folderDiv);
             });
         }
