@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Just Do It 的博客</title>
+    <!-- Marked.js -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -106,13 +111,46 @@
             border: none;
             cursor: pointer;
         }
+        #blog-content {
+            margin: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: none; /* 默认隐藏 */
+        }
         pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            background-color: #f9f9f9;
+            background-color: #1e1e1e;
             padding: 15px;
             border-radius: 5px;
-            border: 1px solid #ddd;
+            overflow-x: auto;
+        }
+        code {
+            font-family: Consolas, monospace;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .custom-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #ff4444;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            display: none;
         }
     </style>
 </head>
@@ -126,6 +164,7 @@
         <button id="search-button" onclick="handleSearch()">搜索</button>
     </div>
     <div id="blog-list"></div>
+    <div id="blog-content"></div>
     <div id="loading">加载中...</div>
     <div id="overlay">
         <div id="modal">
@@ -133,6 +172,8 @@
             <button onclick="closeModal()">我知道了</button>
         </div>
     </div>
+    <!-- 自定义弹窗 -->
+    <div id="custom-alert" class="custom-alert"></div>
 
     <script>
         const giteeUser = 'damian2021';
@@ -141,6 +182,7 @@
         const folder = 'justdoit';
 
         let allBlogs = []; // 存储所有博客数据
+        let copyCount = 0; // 记录用户复制次数
 
         document.addEventListener('DOMContentLoaded', function() {
             fetchBlogList();
@@ -154,11 +196,15 @@
                         'Authorization': `token ${accessToken}`
                     }
                 });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
                 allBlogs = data.filter(blog => blog.name.endsWith('.md')); // 只保留 Markdown 文件
                 displayBlogList(allBlogs);
             } catch (error) {
                 console.error('Error fetching blog list:', error);
+                alert('加载文章列表失败，请检查控制台日志。');
             } finally {
                 document.getElementById('loading').style.display = 'none'; // 隐藏加载动画
             }
@@ -167,6 +213,10 @@
         function displayBlogList(blogs) {
             const blogList = document.getElementById('blog-list');
             blogList.innerHTML = ''; // 清空当前列表
+            if (blogs.length === 0) {
+                blogList.innerHTML = '<p>没有找到文章。</p>';
+                return;
+            }
             blogs.forEach(blog => {
                 const blogItem = document.createElement('div');
                 blogItem.className = 'blog-item';
@@ -184,17 +234,41 @@
                         'Authorization': `token ${accessToken}`
                     }
                 });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
-                displayBlogContent(atob(data.content));
+                const content = decodeBase64(data.content); // 解码 Base64
+                renderMarkdown(content); // 渲染 Markdown
                 document.getElementById('back-button').style.display = 'block'; // 显示返回按钮
+                document.getElementById('blog-list').style.display = 'none'; // 隐藏文章列表
+                document.getElementById('blog-content').style.display = 'block'; // 显示文章内容
             } catch (error) {
                 console.error('Error fetching blog content:', error);
+                alert('加载文章内容失败，请检查控制台日志。');
             }
         }
 
-        function displayBlogContent(content) {
-            const blogList = document.getElementById('blog-list');
-            blogList.innerHTML = `<div class="blog-item"><pre>${content}</pre></div>`;
+        function decodeBase64(base64) {
+            // 使用 decodeURIComponent 和 escape 处理中文字符
+            return decodeURIComponent(
+                atob(base64)
+                    .split('')
+                    .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                    .join('')
+            );
+        }
+
+        function renderMarkdown(content) {
+            const blogContent = document.getElementById('blog-content');
+            // 使用 marked.js 渲染 Markdown
+            blogContent.innerHTML = marked.parse(content, {
+                baseUrl: `https://gitee.com/${giteeUser}/${repo}/raw/master/${folder}/` // 设置图片的基准路径
+            });
+            // 使用 highlight.js 高亮代码块
+            document.querySelectorAll('pre code').forEach(block => {
+                hljs.highlightBlock(block);
+            });
         }
 
         function handleSearch() {
@@ -214,9 +288,25 @@
             document.getElementById('overlay').style.display = 'none';
         }
 
+        // 自定义弹窗函数
+        function showCustomAlert(message, duration = 3000) {
+            const alertDiv = document.getElementById('custom-alert');
+            alertDiv.textContent = message;
+            alertDiv.style.display = 'block';
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, duration);
+        }
+
+        // 监听复制事件
         document.addEventListener('copy', function(e) {
-            e.preventDefault();
-            alert('复制功能已禁用。');
+            e.preventDefault(); // 阻止默认复制行为
+            copyCount++;
+            if (copyCount <= 3) {
+                showCustomAlert('作者还未注册版权，但请不要复制，谢谢(*^o^*)');
+            } else {
+                showCustomAlert('都说了，你不要复制了，你居然还在复制，我谢谢你', 5000);
+            }
         });
     </script>
 </body>
