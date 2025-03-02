@@ -49,53 +49,27 @@
             font-size: 1.2em; /* 手机端标题字体大小 */
         }
         header button {
-            background-color: #555;
+            background-color: #007bff;
             color: #fff;
             border: none;
-            padding: 5px 10px;
+            padding: 8px 16px;
+            border-radius: 5px;
             cursor: pointer;
             display: none; /* 默认隐藏返回按钮 */
             margin-left: 10px; /* 确保按钮不被遮挡 */
             white-space: nowrap; /* 防止按钮文字换行 */
             font-size: 0.9em; /* 手机端按钮字体大小 */
-        }
-        #archive-container {
-            display: flex;
-            gap: 10px;
-            margin-left: 20px;
-            flex: 2;
-            overflow-x: auto; /* 如果归档文件夹过多，允许横向滚动 */
-        }
-        .archive-folder {
-            background-color: #007bff;
-            color: #fff;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
             transition: background-color 0.3s ease;
-            white-space: nowrap; /* 防止文件夹名称换行 */
-            font-size: 0.9em; /* 手机端文件夹字体大小 */
         }
-        .archive-folder:hover {
+        header button:hover {
             background-color: #0056b3;
-        }
-        #quote {
-            margin: 20px;
-            margin-top: 80px; /* 为顶部栏留出空间 */
-            padding: 20px;
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            font-size: 1.1em;
-            color: #333;
         }
         #search-container {
             margin: 20px;
+            margin-top: 80px; /* 为顶部栏留出空间 */
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-top: 20px; /* 为顶部栏留出空间 */
         }
         #search {
             padding: 10px;
@@ -105,6 +79,7 @@
             border-radius: 5px;
             transition: all 0.3s ease;
             font-size: 1em;
+            background-color: rgba(255, 255, 255, 0.9);
         }
         #search:focus {
             border-color: #007bff;
@@ -121,6 +96,24 @@
             font-size: 1em;
         }
         #search-button:hover {
+            background-color: #0056b3;
+        }
+        #archive-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .archive-folder {
+            background-color: #007bff;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            white-space: nowrap; /* 防止文件夹名称换行 */
+            font-size: 0.9em; /* 手机端文件夹字体大小 */
+        }
+        .archive-folder:hover {
             background-color: #0056b3;
         }
         #blog-list {
@@ -263,15 +256,11 @@
             }
             header button {
                 font-size: 0.8em; /* 手机端按钮字体大小 */
-                padding: 5px 8px;
+                padding: 8px 12px;
             }
             .archive-folder {
                 font-size: 0.8em; /* 手机端文件夹字体大小 */
                 padding: 5px 8px;
-            }
-            #quote {
-                font-size: 1em; /* 手机端名言字体大小 */
-                padding: 15px;
             }
             #search {
                 font-size: 0.9em; /* 手机端搜索框字体大小 */
@@ -292,13 +281,12 @@
 <body>
     <header>
         <h1>Damian2012 的博客</h1>
-        <div id="archive-container"></div>
         <button id="back-button" onclick="goBackToHome()">返回首页</button>
     </header>
-    <div id="quote"></div>
     <div id="search-container">
         <input type="text" id="search" placeholder="搜索文章...">
         <button id="search-button" onclick="handleSearch()">搜索</button>
+        <div id="archive-container"></div>
     </div>
     <div id="blog-list"></div>
     <div id="blog-content"></div>
@@ -321,33 +309,11 @@
         let allBlogs = []; // 存储所有博客数据
         let archiveFolders = []; // 存储归档文件夹
 
-        // 随机古诗文和名言
-        const quotes = [
-            "山重水复疑无路，柳暗花明又一村。",
-            "人生自古谁无死，留取丹心照汗青。",
-            "书籍是人类进步的阶梯。",
-            "成功是失败之母。",
-            "天行健，君子以自强不息。",
-            "不积跬步，无以至千里；不积小流，无以成江海。",
-            "知识就是力量。",
-            "读万卷书，行万里路。",
-            "业精于勤，荒于嬉；行成于思，毁于随。",
-            "千里之行，始于足下。"
-        ];
-
         document.addEventListener('DOMContentLoaded', function() {
             fetchBlogList();
             fetchArchiveFolders();
             fetchModalContent();
-            showRandomQuote();
         });
-
-        // 显示随机古诗文或名言
-        function showRandomQuote() {
-            const quoteDiv = document.getElementById('quote');
-            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-            quoteDiv.textContent = randomQuote;
-        }
 
         // 从 tt.txt 加载弹窗内容
         async function fetchModalContent() {
@@ -424,6 +390,8 @@
                 folderDiv.addEventListener('click', () => {
                     fetchBlogList(folder.path);
                     document.getElementById('back-button').style.display = 'block'; // 显示返回按钮
+                    document.getElementById('search-container').style.display = 'none'; // 隐藏搜索栏和归档文件夹
+                    document.getElementById('blog-list').style.marginTop = '80px'; // 调整文章列表的顶部间距
                 });
                 archiveContainer.appendChild(folderDiv);
             });
@@ -446,6 +414,9 @@
                         blogItem.classList.remove('animate__pulse');
                     }, 500);
                     fetchBlogContent(blog.path);
+                    document.getElementById('search-container').style.display = 'none'; // 隐藏搜索栏和归档文件夹
+                    document.getElementById('back-button').style.display = 'block'; // 显示返回按钮
+                    document.getElementById('blog-list').style.marginTop = '80px'; // 调整文章列表的顶部间距
                 });
                 blogList.appendChild(blogItem);
             });
@@ -465,7 +436,6 @@
                 const data = await response.json();
                 const content = decodeBase64(data.content); // 解码 Base64
                 renderMarkdown(content); // 渲染 Markdown
-                document.getElementById('back-button').style.display = 'block'; // 显示返回按钮
                 document.getElementById('blog-list').style.display = 'none'; // 隐藏文章列表
                 document.getElementById('blog-content').style.display = 'block'; // 显示文章内容
             } catch (error) {
@@ -535,7 +505,11 @@
         }
 
         function goBackToHome() {
-            window.location.reload(); // 刷新页面以返回首页
+            document.getElementById('search-container').style.display = 'flex'; // 显示搜索栏和归档文件夹
+            document.getElementById('back-button').style.display = 'none'; // 隐藏返回按钮
+            document.getElementById('blog-content').style.display = 'none'; // 隐藏文章内容
+            document.getElementById('blog-list').style.display = 'block'; // 显示文章列表
+            document.getElementById('blog-list').style.marginTop = '20px'; // 恢复文章列表的顶部间距
         }
 
         function closeModal() {
