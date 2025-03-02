@@ -510,6 +510,7 @@
             document.getElementById('blog-content').style.display = 'none'; // 隐藏文章内容
             document.getElementById('blog-list').style.display = 'block'; // 显示文章列表
             document.getElementById('blog-list').style.marginTop = '20px'; // 恢复文章列表的顶部间距
+            fetchBlogList(); // 重新加载首页文章列表
         }
 
         function closeModal() {
