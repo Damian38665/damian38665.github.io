@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>编辑分数</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #555;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>编辑分数</h1>
+    <form onsubmit="event.preventDefault(); saveScore();">
+        <label for="math">数学:</label>
+        <input type="number" id="math" required>
+        <label for="chinese">语文:</label>
+        <input type="number" id="chinese" required>
+        <label for="english">英语:</label>
+        <input type="number" id="english" required>
+        <label for="social">社会:</label>
+        <input type="number" id="social" required>
+        <label for="science">科学:</label>
+        <input type="number" id="science" required>
+        <button type="submit">保存</button>
+    </form>
+    <div class="loader" id="loader"></div>
+
+    <script>
+        const GITEE_USER = 'damian2021';
+        const GITEE_TOKEN = 'b5a96c2df3774e1a8ded0ff0cc54cdfa';
+        const REPO = 'sever666';
+        const FILE_PATH = 'fraction.txt';
+
+        // 获取文件内容和 SHA
+        async function fetchFile() {
+            const url = `https://gitee.com/api/v5/repos/${GITEE_USER}/${REPO}/contents/${FILE_PATH}?access_token=${GITEE_TOKEN}`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('无法加载文件');
+            const data = await response.json();
+            return { content: data.content ? atob(data.content) : '', sha: data.sha };
+        }
+
+        // 保存分数
+        async function saveScore() {
+            const loader = document.getElementById('loader');
+            loader.style.display = 'block';
+
+            try {
+                // 获取表单数据
+                const math = parseInt(document.getElementById('math').value);
+                const chinese = parseInt(document.getElementById('chinese').value);
+                const english = parseInt(document.getElementById('english').value);
+                const social = parseInt(document.getElementById('social').value);
+                const science = parseInt(document.getElementById('science').value);
+                const date = new Date().toLocaleDateString();
+
+                // 获取当前文件内容和 SHA
+                const { content, sha } = await fetchFile();
+                const scores = content ? JSON.parse(content) : [];
+                scores.push({ date, math, chinese, english, social, science });
+
+                // 更新文件
+                const url = `https://gitee.com/api/v5/repos/${GITEE_USER}/${REPO}/contents/${FILE_PATH}`;
+                const body = {
+                    access_token: GITEE_TOKEN,
+                    content: btoa(JSON.stringify(scores)), // 编码为 Base64
+                    message: '更新分数数据',
+                    sha: sha // 必须提供 SHA 以更新文件
+                };
+
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                if (response.ok) {
+                    alert('分数已保存！');
+                } else {
+                    const errorData = await response.json();
+                    console.error('保存失败:', errorData);
+                    throw new Error('保存失败');
+                }
+            } catch (error) {
+                console.error('保存分数失败:', error);
+                alert('保存失败，请稍后重试。');
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
