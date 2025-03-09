@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>分数展示</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #555;
+        }
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <h1>我的分数</h1>
+    <div class="loader" id="loader"></div>
+    <button onclick="loadScores('date')">按时间排序</button>
+    <button onclick="loadScores('total')">按总分排序</button>
+    <table id="scoreTable">
+        <thead>
+            <tr>
+                <th>日期</th>
+                <th>数学</th>
+                <th>语文</th>
+                <th>英语</th>
+                <th>社会</th>
+                <th>科学</th>
+                <th>总分</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 数据动态加载 -->
+        </tbody>
+    </table>
+
+    <script>
+        const GITEE_USER = 'damian2021';
+        const GITEE_TOKEN = 'b5a96c2df3774e1a8ded0ff0cc54cdfa';
+        const REPO = 'sever666';
+        const FILE_PATH = 'fraction.txt';
+
+        async function fetchFile() {
+            const url = `https://gitee.com/api/v5/repos/${GITEE_USER}/${REPO}/contents/${FILE_PATH}?access_token=${GITEE_TOKEN}`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('无法加载文件');
+            const data = await response.json();
+            return atob(data.content); // 解码 Base64 内容
+        }
+
+        async function loadScores(sortType) {
+            const loader = document.getElementById('loader');
+            const tableBody = document.querySelector('#scoreTable tbody');
+            loader.style.display = 'block';
+            tableBody.innerHTML = '';
+
+            try {
+                const content = await fetchFile();
+                const scores = JSON.parse(content);
+
+                if (sortType === 'date') {
+                    scores.sort((a, b) => new Date(a.date) - new Date(b.date));
+                } else if (sortType === 'total') {
+                    scores.sort((a, b) => (b.math + b.chinese + b.english + b.social + b.science) - (a.math + a.chinese + a.english + a.social + a.science));
+                }
+
+                scores.forEach(score => {
+                    const total = score.math + score.chinese + score.english + score.social + score.science;
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${score.date}</td>
+                        <td>${score.math}</td>
+                        <td>${score.chinese}</td>
+                        <td>${score.english}</td>
+                        <td>${score.social}</td>
+                        <td>${score.science}</td>
+                        <td>${total}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('加载分数失败:', error);
+                tableBody.innerHTML = '<tr><td colspan="7">加载分数失败，请稍后重试。</td></tr>';
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        window.onload = () => loadScores('date');
+    </script>
+</body>
+</html>
