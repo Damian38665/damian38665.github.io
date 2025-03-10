@@ -69,6 +69,7 @@
     <div class="loader" id="loader"></div>
     <button onclick="loadScores('date')">按时间排序</button>
     <button onclick="loadScores('total')">按总分排序</button>
+    <button onclick="loadScores('rank')">按班级排名排序</button>
     <table id="scoreTable">
         <thead>
             <tr>
@@ -79,6 +80,7 @@
                 <th>社会</th>
                 <th>科学</th>
                 <th>总分</th>
+                <th>班级排名</th>
             </tr>
         </thead>
         <tbody>
@@ -113,26 +115,33 @@
                 if (sortType === 'date') {
                     scores.sort((a, b) => new Date(a.date) - new Date(b.date));
                 } else if (sortType === 'total') {
-                    scores.sort((a, b) => (b.math + b.chinese + b.english + b.social + b.science) - (a.math + a.chinese + a.english + a.social + a.science));
+                    scores.sort((a, b) => {
+                        const totalA = (a.math || 0) + (a.chinese || 0) + (a.english || 0) + (a.social || 0) + (a.science || 0);
+                        const totalB = (b.math || 0) + (b.chinese || 0) + (b.english || 0) + (b.social || 0) + (b.science || 0);
+                        return totalB - totalA;
+                    });
+                } else if (sortType === 'rank') {
+                    scores.sort((a, b) => (a.rank || Infinity) - (b.rank || Infinity));
                 }
 
                 scores.forEach(score => {
-                    const total = score.math + score.chinese + score.english + score.social + score.science;
+                    const total = (score.math || 0) + (score.chinese || 0) + (score.english || 0) + (score.social || 0) + (score.science || 0);
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${score.date}</td>
-                        <td>${score.math}</td>
-                        <td>${score.chinese}</td>
-                        <td>${score.english}</td>
-                        <td>${score.social}</td>
-                        <td>${score.science}</td>
+                        <td>${score.math ?? ''}</td>
+                        <td>${score.chinese ?? ''}</td>
+                        <td>${score.english ?? ''}</td>
+                        <td>${score.social ?? ''}</td>
+                        <td>${score.science ?? ''}</td>
                         <td>${total}</td>
+                        <td>${score.rank ?? ''}</td>
                     `;
                     tableBody.appendChild(row);
                 });
             } catch (error) {
                 console.error('加载分数失败:', error);
-                tableBody.innerHTML = '<tr><td colspan="7">加载分数失败，请稍后重试。</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="8">加载分数失败，请稍后重试。</td></tr>';
             } finally {
                 loader.style.display = 'none';
             }
