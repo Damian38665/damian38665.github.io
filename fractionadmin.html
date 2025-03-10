@@ -65,16 +65,20 @@
 <body>
     <h1>编辑分数</h1>
     <form onsubmit="event.preventDefault(); saveScore();">
+        <label for="date">发布日期:</label>
+        <input type="date" id="date" required>
         <label for="math">数学:</label>
-        <input type="number" id="math" required>
+        <input type="number" id="math" step="0.1">
         <label for="chinese">语文:</label>
-        <input type="number" id="chinese" required>
+        <input type="number" id="chinese" step="0.1">
         <label for="english">英语:</label>
-        <input type="number" id="english" required>
+        <input type="number" id="english" step="0.1">
         <label for="social">社会:</label>
-        <input type="number" id="social" required>
+        <input type="number" id="social" step="0.1">
         <label for="science">科学:</label>
-        <input type="number" id="science" required>
+        <input type="number" id="science" step="0.1">
+        <label for="rank">班级排名:</label>
+        <input type="number" id="rank">
         <button type="submit">保存</button>
     </form>
     <div class="loader" id="loader"></div>
@@ -101,17 +105,18 @@
 
             try {
                 // 获取表单数据
-                const math = parseInt(document.getElementById('math').value);
-                const chinese = parseInt(document.getElementById('chinese').value);
-                const english = parseInt(document.getElementById('english').value);
-                const social = parseInt(document.getElementById('social').value);
-                const science = parseInt(document.getElementById('science').value);
-                const date = new Date().toLocaleDateString();
+                const date = document.getElementById('date').value;
+                const math = parseFloat(document.getElementById('math').value);
+                const chinese = parseFloat(document.getElementById('chinese').value);
+                const english = parseFloat(document.getElementById('english').value);
+                const social = parseFloat(document.getElementById('social').value);
+                const science = parseFloat(document.getElementById('science').value);
+                const rank = parseInt(document.getElementById('rank').value);
 
                 // 获取当前文件内容和 SHA
                 const { content, sha } = await fetchFile();
                 const scores = content ? JSON.parse(content) : [];
-                scores.push({ date, math, chinese, english, social, science });
+                scores.push({ date, math, chinese, english, social, science, rank });
 
                 // 更新文件
                 const url = `https://gitee.com/api/v5/repos/${GITEE_USER}/${REPO}/contents/${FILE_PATH}`;
