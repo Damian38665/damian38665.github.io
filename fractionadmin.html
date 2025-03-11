@@ -20,7 +20,7 @@
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
+            max-width: 600px;
             margin: 0 auto;
         }
         label {
@@ -39,7 +39,7 @@
             color: white;
             border: none;
             padding: 10px 20px;
-            width: 100%;
+            margin: 5px;
             border-radius: 5px;
             cursor: pointer;
         }
@@ -59,6 +59,27 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
         }
     </style>
 </head>
@@ -82,6 +103,24 @@
         <button type="submit">保存</button>
     </form>
     <div class="loader" id="loader"></div>
+    <table id="scoreTable">
+        <thead>
+            <tr>
+                <th>日期</th>
+                <th>数学</th>
+                <th>语文</th>
+                <th>英语</th>
+                <th>社会</th>
+                <th>科学</th>
+                <th>总分</th>
+                <th>班级排名</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 数据动态加载 -->
+        </tbody>
+    </table>
 
     <script>
         const GITEE_USER = 'damian2021';
@@ -106,12 +145,12 @@
             try {
                 // 获取表单数据
                 const date = document.getElementById('date').value;
-                const math = parseFloat(document.getElementById('math').value);
-                const chinese = parseFloat(document.getElementById('chinese').value);
-                const english = parseFloat(document.getElementById('english').value);
-                const social = parseFloat(document.getElementById('social').value);
-                const science = parseFloat(document.getElementById('science').value);
-                const rank = parseInt(document.getElementById('rank').value);
+                const math = parseFloat(document.getElementById('math').value) || null;
+                const chinese = parseFloat(document.getElementById('chinese').value) || null;
+                const english = parseFloat(document.getElementById('english').value) || null;
+                const social = parseFloat(document.getElementById('social').value) || null;
+                const science = parseFloat(document.getElementById('science').value) || null;
+                const rank = parseInt(document.getElementById('rank').value) || null;
 
                 // 获取当前文件内容和 SHA
                 const { content, sha } = await fetchFile();
@@ -135,6 +174,7 @@
 
                 if (response.ok) {
                     alert('分数已保存！');
+                    loadScores();
                 } else {
                     const errorData = await response.json();
                     console.error('保存失败:', errorData);
@@ -147,6 +187,116 @@
                 loader.style.display = 'none';
             }
         }
+
+        // 加载分数并显示
+        async function loadScores() {
+            const loader = document.getElementById('loader');
+            const tableBody = document.querySelector('#scoreTable tbody');
+            loader.style.display = 'block';
+            tableBody.innerHTML = '';
+
+            try {
+                const { content } = await fetchFile();
+                const scores = content ? JSON.parse(content) : [];
+
+                scores.forEach((score, index) => {
+                    const total = (score.math || 0) + (score.chinese || 0) + (score.english || 0) + (score.social || 0) + (score.science || 0);
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${score.date}</td>
+                        <td>${score.math ?? ''}</td>
+                        <td>${score.chinese ?? ''}</td>
+                        <td>${score.english ?? ''}</td>
+                        <td>${score.social ?? ''}</td>
+                        <td>${score.science ?? ''}</td>
+                        <td>${total}</td>
+                        <td>${score.rank ?? ''}</td>
+                        <td>
+                            <button onclick="editScore(${index})">编辑</button>
+                            <button onclick="deleteScore(${index})">删除</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('加载分数失败:', error);
+                tableBody.innerHTML = '<tr><td colspan="9">加载分数失败，请稍后重试。</td></tr>';
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        // 编辑分数
+        async function editScore(index) {
+            const { content, sha } = await fetchFile();
+            const scores = JSON.parse(content);
+            const score = scores[index];
+
+            // 填充表单
+            document.getElementById('date').value = score.date;
+            document.getElementById('math').value = score.math || '';
+            document.getElementById('chinese').value = score.chinese || '';
+            document.getElementById('english').value = score.english || '';
+            document.getElementById('social').value = score.social || '';
+            document.getElementById('science').value = score.science || '';
+            document.getElementById('rank').value = score.rank || '';
+
+            // 删除旧数据
+            scores.splice(index, 1);
+
+            // 更新文件
+            const url = `https://gitee.com/api/v5/repos/${GITEE_USER}/${REPO}/contents/${FILE_PATH}`;
+            const body = {
+                access_token: GITEE_TOKEN,
+                content: btoa(JSON.stringify(scores)),
+                message: '删除旧分数数据',
+                sha: sha
+            };
+
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            if (response.ok) {
+                alert('已加载旧数据到表单，请修改后保存。');
+            } else {
+                alert('加载旧数据失败，请稍后重试。');
+            }
+        }
+
+        // 删除分数
+        async function deleteScore(index) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+
+            const { content, sha } = await fetchFile();
+            const scores = JSON.parse(content);
+            scores.splice(index, 1);
+
+            const url = `https://gitee.com/api/v5/repos/${GITEE_USER}/${REPO}/contents/${FILE_PATH}`;
+            const body = {
+                access_token: GITEE_TOKEN,
+                content: btoa(JSON.stringify(scores)),
+                message: '删除分数数据',
+                sha: sha
+            };
+
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            if (response.ok) {
+                alert('删除成功！');
+                loadScores();
+            } else {
+                alert('删除失败，请稍后重试。');
+            }
+        }
+
+        window.onload = loadScores;
     </script>
 </body>
 </html>
