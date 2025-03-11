@@ -29,6 +29,28 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .search-container input {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px 0 0 5px;
+        }
+        .search-container button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #3498db;
+            color: white;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+        .search-container button:hover {
+            background-color: #2980b9;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -66,6 +88,10 @@
 </head>
 <body>
     <h1>我的分数</h1>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="输入日期或科目搜索">
+        <button onclick="searchScores()">搜索</button>
+    </div>
     <div class="loader" id="loader"></div>
     <button onclick="loadScores('date')">按时间排序</button>
     <button onclick="loadScores('total')">按总分排序</button>
@@ -142,6 +168,52 @@
             } catch (error) {
                 console.error('加载分数失败:', error);
                 tableBody.innerHTML = '<tr><td colspan="8">加载分数失败，请稍后重试。</td></tr>';
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        async function searchScores() {
+            const loader = document.getElementById('loader');
+            const tableBody = document.querySelector('#scoreTable tbody');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            loader.style.display = 'block';
+            tableBody.innerHTML = '';
+
+            try {
+                const content = await fetchFile();
+                const scores = JSON.parse(content);
+
+                const filteredScores = scores.filter(score => {
+                    return (
+                        score.date.toLowerCase().includes(searchTerm) ||
+                        (score.math && score.math.toString().includes(searchTerm)) ||
+                        (score.chinese && score.chinese.toString().includes(searchTerm)) ||
+                        (score.english && score.english.toString().includes(searchTerm)) ||
+                        (score.social && score.social.toString().includes(searchTerm)) ||
+                        (score.science && score.science.toString().includes(searchTerm)) ||
+                        (score.rank && score.rank.toString().includes(searchTerm))
+                    );
+                });
+
+                filteredScores.forEach(score => {
+                    const total = (score.math || 0) + (score.chinese || 0) + (score.english || 0) + (score.social || 0) + (score.science || 0);
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${score.date}</td>
+                        <td>${score.math ?? ''}</td>
+                        <td>${score.chinese ?? ''}</td>
+                        <td>${score.english ?? ''}</td>
+                        <td>${score.social ?? ''}</td>
+                        <td>${score.science ?? ''}</td>
+                        <td>${total}</td>
+                        <td>${score.rank ?? ''}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('搜索分数失败:', error);
+                tableBody.innerHTML = '<tr><td colspan="8">搜索分数失败，请稍后重试。</td></tr>';
             } finally {
                 loader.style.display = 'none';
             }
