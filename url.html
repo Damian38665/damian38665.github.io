@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安全验证 - 跳转中</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .verification-box {
+            border: 2px solid #e0e0e0;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .verification-box:hover {
+            border-color: #2196F3;
+        }
+
+        .verification-box.verified {
+            border-color: #4CAF50;
+            background: #f5fff5;
+        }
+
+        .loader {
+            display: none;
+            width: 30px;
+            height: 30px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2196F3;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-text {
+            color: #666;
+            margin: 10px 0;
+            min-height: 24px;
+        }
+
+        .countdown {
+            color: #2196F3;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #ff4444;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>安全验证</h2>
+        <p>请完成以下验证以继续访问</p>
+        
+        <div class="verification-box" onclick="verify()">
+            <div class="status-text" id="status">✓ 点击方框验证人类身份</div>
+        </div>
+
+        <div class="loader" id="loader"></div>
+        <p id="redirectText"></p>
+        <p id="errorText" class="error"></p>
+    </div>
+
+    <script>
+        function getRedirectUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetUrl = urlParams.get('url');
+
+            if (!targetUrl) {
+                showError('错误：缺少跳转参数，请使用 ?url=目标地址 的格式');
+                return null;
+            }
+
+            try {
+                // 确保目标地址是完整的HTTPS URL
+                let finalUrl = targetUrl.trim();
+                if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
+                    finalUrl = 'https://' + finalUrl;
+                }
+                // 强制使用HTTPS
+                finalUrl = finalUrl.replace('http://', 'https://');
+                return finalUrl;
+            } catch (error) {
+                showError('错误：目标地址格式不正确');
+                return null;
+            }
+        }
+
+        function verify() {
+            const box = document.querySelector('.verification-box');
+            const status = document.getElementById('status');
+            const loader = document.getElementById('loader');
+            const redirectText = document.getElementById('redirectText');
+
+            // 添加已验证样式
+            box.classList.add('verified');
+            box.style.cursor = 'default';
+            box.onclick = null;
+
+            // 显示加载动画
+            loader.style.display = 'block';
+            status.innerHTML = '✓ 验证成功！正在准备跳转...';
+
+            // 获取目标URL
+            const targetUrl = getRedirectUrl();
+            if (!targetUrl) return;
+
+            let countdown = 3;
+
+            // 显示倒计时
+            const countdownInterval = setInterval(() => {
+                redirectText.innerHTML = `将在 <span class="countdown">${countdown}</span> 秒后自动跳转...`;
+                countdown--;
+                
+                if (countdown < 0) {
+                    clearInterval(countdownInterval);
+                    window.location.href = targetUrl;
+                }
+            }, 1000);
+        }
+
+        function showError(message) {
+            const errorText = document.getElementById('errorText');
+            errorText.textContent = message;
+        }
+
+        // 初始检查
+        window.onload = function() {
+            const targetUrl = getRedirectUrl();
+            if (!targetUrl) {
+                document.querySelector('.verification-box').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
