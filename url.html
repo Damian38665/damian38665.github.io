@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>安全验证 - 跳转中</title>
     <style>
+        /* 全局样式 */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f0f2f5;
@@ -15,6 +16,13 @@
             margin: 0;
         }
 
+        /* 移除按钮默认高亮 */
+        button, input, textarea, select, a {
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+
+        /* 容器样式 */
         .container {
             background: white;
             padding: 2rem;
@@ -25,6 +33,7 @@
             width: 90%;
         }
 
+        /* 验证框样式 */
         .verification-box {
             border: 2px solid #e0e0e0;
             padding: 1.5rem;
@@ -32,6 +41,7 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
+            user-select: none;
         }
 
         .verification-box:hover {
@@ -43,6 +53,7 @@
             background: #f5fff5;
         }
 
+        /* 加载动画 */
         .loader {
             display: none;
             width: 30px;
@@ -59,20 +70,33 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* 状态文本 */
         .status-text {
             color: #666;
             margin: 10px 0;
             min-height: 24px;
         }
 
+        /* 倒计时样式 */
         .countdown {
             color: #2196F3;
             font-weight: bold;
         }
 
+        /* 错误提示 */
         .error {
             color: #ff4444;
             font-weight: bold;
+        }
+
+        /* 小陈科技字样 */
+        .brand {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #666;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -90,13 +114,16 @@
         <p id="errorText" class="error"></p>
     </div>
 
+    <!-- 小陈科技字样 -->
+    <div class="brand">小陈科技</div>
+
     <script>
         function getRedirectUrl() {
             const urlParams = new URLSearchParams(window.location.search);
             const targetUrl = urlParams.get('url');
 
             if (!targetUrl) {
-                showError('错误：缺少跳转参数，请使用 ?url=目标地址 的格式');
+                showError('错误代码: -1');
                 return null;
             }
 
