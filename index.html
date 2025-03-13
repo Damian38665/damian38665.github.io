@@ -1,9 +1,395 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <meta http-equiv="refresh" content="2; url=https://p.kdocs.cn/s/MF4V3MA6ADAD4">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小陈工作室 - 纯净软件创造者</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent; /* 移除所有点击高亮 */
+            outline: none; /* 移除焦点轮廓 */
+        }
+
+        body {
+            background-color: #f0f4f8;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .navbar .menu {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            position: relative;
+            padding: 5px 10px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        /* 导航栏波纹效果 */
+        .navbar a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .navbar a:hover::after {
+            opacity: 1;
+        }
+
+        .menu-toggle {
+            display: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 6rem 2rem;
+            background: linear-gradient(120deg, #1e3a8a, #2563eb);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            animation: zoomIn 1s ease-out;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            animation: fadeInUp 1s ease-out 0.5s;
+            animation-fill-mode: both;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 10%, transparent 10.01%);
+            background-size: 20px 20px;
+            animation: moveBackground 10s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            from { transform: translateY(0); }
+            to { transform: translateY(200px); }
+        }
+
+        .section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 卡片点击波纹效果 */
+        .card .ripple {
+            position: absolute;
+            background: rgba(37, 99, 235, 0.3);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            border-radius: 50%;
+            animation: rippleEffect 0.6s linear;
+        }
+
+        @keyframes rippleEffect {
+            from {
+                width: 0;
+                height: 0;
+                opacity: 0.5;
+            }
+            to {
+                width: 600px;
+                height: 600px;
+                opacity: 0;
+            }
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .vip-section {
+            background: #fff;
+            border-left: 4px solid #f59e0b;
+            padding: 2rem;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-member {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        footer {
+            background: #1e293b;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        /* 自定义弹窗 */
+        .custom-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .custom-modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            max-width: 90%;
+            width: 400px;
+        }
+
+        .custom-modal-content button {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .navbar .menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: #1d4ed8;
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .navbar .menu.active {
+                display: flex;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+    </style>
 </head>
 <body>
-    <p>正在跳转，请稍候...</p>
+    <nav class="navbar">
+        <div class="logo">小陈工作室</div>
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="menu" id="menu">
+            <a href="#home">首页</a>
+            <a href="#about">关于我们</a>
+            <a href="#projects">开发项目</a>
+            <a href="#team">核心人员</a>
+            <a href="#vip">VIP服务</a>
+        </div>
+    </nav>
+
+    <section class="hero" id="home">
+        <h1>小陈工作室</h1>
+        <p>纯净软件创造者 · 广告零容忍</p>
+    </section>
+
+    <section id="about" class="section">
+        <h2>关于我们</h2>
+        <div class="card">
+            <p>我们是一支专注于软件开发的小型团队，始终秉持"用户体验至上"的原则。我们郑重承诺：所有由我们开发的软件将永远不会出现任何形式的广告。用技术创造价值，用代码守护纯净。</p>
+        </div>
+    </section>
+
+    <section id="projects" class="section">
+        <h2>开发项目</h2>
+        <div class="card-container">
+            <div class="card" onclick="showModal(event)">
+                <h3>极域电子教室杀手</h3>
+                <p>突破传统教学软件限制，打造自由教学环境</p>
+            </div>
+            <div class="card" onclick="window.location.href='https://damian38665.github.io/app/pointsever'">
+                <h3>积分系统</h3>
+                <p>灵活高效的积分管理解决方案</p>
+            </div>
+            <div class="card" onclick="showModal(event)">
+                <h3>小陈系统</h3>
+                <p>轻量级操作系统定制方案</p>
+            </div>
+            <div class="card" onclick="showModal(event)">
+                <h3>小陈云盘</h3>
+                <p>安全可靠的私有云存储服务</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="team" class="section">
+        <h2>核心人员</h2>
+        <div class="card-container">
+            <div class="card team-member">
+                <i class="fas fa-user-secret"></i>
+                <h3>Damian2012</h3>
+                <p>开发者</p>
+            </div>
+            <div class="card team-member">
+                <i class="fas fa-code"></i>
+                <h3>happyth</h3>
+                <p>构建师</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="vip" class="section">
+        <div class="vip-section">
+            <h2>VIP服务</h2>
+            <p>我们正在精心打造VIP会员体系，届时将提供：</p>
+            <ul>
+                <li>优先体验新功能</li>
+                <li>专属技术支持</li>
+                <li>定制开发服务</li>
+            </ul>
+            <p style="color:#f59e0b;">VIP缴费系统即将上线，敬请期待！</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2023 小陈工作室</p>
+        <p>联系我们: orange38665@qq.com 或 orange38664@qq.com</p>
+    </footer>
+
+    <!-- 自定义弹窗 -->
+    <div class="custom-modal" id="customModal">
+        <div class="custom-modal-content">
+            <p>抱歉，由于某些数据丢失，我们无法为您提供该项目详情。</p>
+            <button onclick="closeModal()">关闭</button>
+        </div>
+    </div>
+
+    <script>
+        // 波纹效果
+        function createRipple(event) {
+            const card = event.currentTarget;
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple';
+            
+            const rect = card.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            
+            card.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        }
+
+        // 绑定点击事件
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', createRipple);
+        });
+
+        // 切换菜单
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.classList.toggle('active');
+        }
+
+        // 点击其他地方隐藏菜单
+        document.addEventListener('click', (event) => {
+            const menu = document.getElementById('menu');
+            const menuToggle = document.querySelector('.menu-toggle');
+            if (!menu.contains(event.target) && !menuToggle.contains(event.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // 显示弹窗
+        function showModal(event) {
+            if(!event.target.closest('.card').classList.contains('team-member')) {
+                document.getElementById('customModal').style.display = 'flex';
+            }
+        }
+
+        // 关闭弹窗
+        function closeModal() {
+            document.getElementById('customModal').style.display = 'none';
+        }
+    </script>
 </body>
 </html>
