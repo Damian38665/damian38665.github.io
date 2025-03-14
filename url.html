@@ -53,21 +53,23 @@
             background: #f5fff5;
         }
 
-        /* 加载动画 */
-        .loader {
+        /* 加载条 */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
             display: none;
-            width: 30px;
-            height: 30px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #2196F3;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .progress-bar-inner {
+            width: 0;
+            height: 100%;
+            background: #2196F3;
+            border-radius: 4px;
+            transition: width 2s linear;
         }
 
         /* 状态文本 */
@@ -77,10 +79,17 @@
             min-height: 24px;
         }
 
-        /* 倒计时样式 */
-        .countdown {
-            color: #2196F3;
+        /* 安全提示 */
+        .safe-notice {
+            color: #4CAF50;
             font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .unsafe-notice {
+            color: #ff4444;
+            font-weight: bold;
+            margin: 10px 0;
         }
 
         /* 错误提示 */
@@ -109,8 +118,18 @@
             <div class="status-text" id="status">✓ 点击方框验证人类身份</div>
         </div>
 
-        <div class="loader" id="loader"></div>
-        <p id="redirectText"></p>
+        <!-- 加载条 -->
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-bar-inner" id="progressBarInner"></div>
+        </div>
+
+        <!-- 跳转链接显示 -->
+        <p id="targetUrlText"></p>
+
+        <!-- 安全提示 -->
+        <p id="safetyNotice"></p>
+
+        <!-- 错误提示 -->
         <p id="errorText" class="error"></p>
     </div>
 
@@ -145,34 +164,39 @@
         function verify() {
             const box = document.querySelector('.verification-box');
             const status = document.getElementById('status');
-            const loader = document.getElementById('loader');
-            const redirectText = document.getElementById('redirectText');
+            const progressBar = document.getElementById('progressBar');
+            const progressBarInner = document.getElementById('progressBarInner');
+            const targetUrlText = document.getElementById('targetUrlText');
+            const safetyNotice = document.getElementById('safetyNotice');
 
             // 添加已验证样式
             box.classList.add('verified');
             box.style.cursor = 'default';
             box.onclick = null;
 
-            // 显示加载动画
-            loader.style.display = 'block';
+            // 显示加载条
+            progressBar.style.display = 'block';
+            progressBarInner.style.width = '100%'; // 开始加载动画
             status.innerHTML = '✓ 验证成功！正在准备跳转...';
 
             // 获取目标URL
             const targetUrl = getRedirectUrl();
             if (!targetUrl) return;
 
-            let countdown = 3;
+            // 显示目标地址
+            targetUrlText.innerHTML = `即将跳转至：<a href="${targetUrl}" target="_blank">${targetUrl}</a>`;
 
-            // 显示倒计时
-            const countdownInterval = setInterval(() => {
-                redirectText.innerHTML = `将在 <span class="countdown">${countdown}</span> 秒后自动跳转...`;
-                countdown--;
-                
-                if (countdown < 0) {
-                    clearInterval(countdownInterval);
-                    window.location.href = targetUrl;
-                }
-            }, 1000);
+            // 检查目标地址是否安全
+            if (targetUrl.includes('damian38665.github.io')) {
+                safetyNotice.innerHTML = '<span class="safe-notice">您将前往的页面安全，放心前往</span>';
+            } else {
+                safetyNotice.innerHTML = '<span class="unsafe-notice">您前往的地址并没有被核实过，请注意安全</span>';
+            }
+
+            // 2秒后跳转
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 2000);
         }
 
         function showError(message) {
