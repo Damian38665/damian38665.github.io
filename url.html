@@ -53,7 +53,7 @@
             background: #f5fff5;
         }
 
-        /* 加载条 */
+        /* 进度条 */
         .progress-bar {
             width: 100%;
             height: 8px;
@@ -61,7 +61,8 @@
             border-radius: 4px;
             overflow: hidden;
             margin: 20px 0;
-            display: none;
+            position: relative;
+            display: none; /* 默认隐藏 */
         }
 
         .progress-bar-inner {
@@ -98,7 +99,7 @@
             font-weight: bold;
         }
 
-        /* 小陈科技字样 */
+        /* 小陈科技字样动画 */
         .brand {
             position: absolute;
             bottom: 20px;
@@ -106,6 +107,50 @@
             transform: translateX(-50%);
             color: #666;
             font-size: 14px;
+            opacity: 0;
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        /* 跳转提示 */
+        .redirect-notice {
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        /* 继续按钮样式（谷歌扩散效果） */
+        .continue-button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 24px;
+            font-size: 16px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: none; /* 默认隐藏 */
+        }
+
+        .continue-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3), rgba(255,255,255,0) 70%);
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.5s ease;
+        }
+
+        .continue-button:active::after {
+            transform: translate(-50%, -50%) scale(1);
         }
     </style>
 </head>
@@ -114,29 +159,34 @@
         <h2>安全验证</h2>
         <p>请完成以下验证以继续访问</p>
         
+        <!-- 验证框 -->
         <div class="verification-box" onclick="verify()">
             <div class="status-text" id="status">✓ 点击方框验证人类身份</div>
         </div>
 
-        <!-- 加载条 -->
-        <div class="progress-bar" id="progressBar">
-            <div class="progress-bar-inner" id="progressBarInner"></div>
-        </div>
-
         <!-- 跳转链接显示 -->
-        <p id="targetUrlText"></p>
+        <p id="targetUrlText" class="redirect-notice"></p>
 
         <!-- 安全提示 -->
         <p id="safetyNotice"></p>
+
+        <!-- 继续按钮 -->
+        <button class="continue-button" id="continueButton" onclick="startRedirect()">继续</button>
+
+        <!-- 进度条 -->
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-bar-inner" id="progressBarInner"></div>
+        </div>
 
         <!-- 错误提示 -->
         <p id="errorText" class="error"></p>
     </div>
 
     <!-- 小陈科技字样 -->
-    <div class="brand">小陈科技</div>
+    <div class="brand" id="brand">小陈科技</div>
 
     <script>
+        // 获取目标 URL
         function getRedirectUrl() {
             const urlParams = new URLSearchParams(window.location.search);
             const targetUrl = urlParams.get('url');
@@ -147,12 +197,12 @@
             }
 
             try {
-                // 确保目标地址是完整的HTTPS URL
+                // 确保目标地址是完整的 HTTPS URL
                 let finalUrl = targetUrl.trim();
                 if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
                     finalUrl = 'https://' + finalUrl;
                 }
-                // 强制使用HTTPS
+                // 强制使用 HTTPS
                 finalUrl = finalUrl.replace('http://', 'https://');
                 return finalUrl;
             } catch (error) {
@@ -161,27 +211,10 @@
             }
         }
 
-        function verify() {
-            const box = document.querySelector('.verification-box');
-            const status = document.getElementById('status');
-            const progressBar = document.getElementById('progressBar');
-            const progressBarInner = document.getElementById('progressBarInner');
+        // 显示目标链接和安全提示
+        function displayTargetInfo(targetUrl) {
             const targetUrlText = document.getElementById('targetUrlText');
             const safetyNotice = document.getElementById('safetyNotice');
-
-            // 添加已验证样式
-            box.classList.add('verified');
-            box.style.cursor = 'default';
-            box.onclick = null;
-
-            // 显示加载条
-            progressBar.style.display = 'block';
-            progressBarInner.style.width = '100%'; // 开始加载动画
-            status.innerHTML = '✓ 验证成功！正在准备跳转...';
-
-            // 获取目标URL
-            const targetUrl = getRedirectUrl();
-            if (!targetUrl) return;
 
             // 显示目标地址
             targetUrlText.innerHTML = `即将跳转至：<a href="${targetUrl}" target="_blank">${targetUrl}</a>`;
@@ -192,19 +225,63 @@
             } else {
                 safetyNotice.innerHTML = '<span class="unsafe-notice">您前往的地址并没有被核实过，请注意安全</span>';
             }
-
-            // 2秒后跳转
-            setTimeout(() => {
-                window.location.href = targetUrl;
-            }, 2000);
         }
 
+        // 验证函数
+        function verify() {
+            const box = document.querySelector('.verification-box');
+            const status = document.getElementById('status');
+            const continueButton = document.getElementById('continueButton');
+
+            // 添加已验证样式
+            box.classList.add('verified');
+            box.style.cursor = 'default';
+            box.onclick = null;
+
+            // 显示信息和继续按钮
+            status.innerHTML = '✓ 验证成功！';
+            continueButton.style.display = 'inline-block';
+
+            // 获取目标 URL 并显示信息
+            const targetUrl = getRedirectUrl();
+            if (!targetUrl) return;
+            displayTargetInfo(targetUrl);
+        }
+
+        // 开始跳转
+        function startRedirect() {
+            const progressBar = document.getElementById('progressBar');
+            const progressBarInner = document.getElementById('progressBarInner');
+            const continueButton = document.getElementById('continueButton');
+            const brand = document.getElementById('brand');
+
+            // 显示进度条
+            progressBar.style.display = 'block';
+            progressBarInner.style.width = '100%';
+
+            // 禁用继续按钮
+            continueButton.disabled = true;
+            continueButton.style.opacity = '0.7';
+
+            // 2 秒后跳转
+            setTimeout(() => {
+                const targetUrl = getRedirectUrl();
+                if (targetUrl) {
+                    window.location.href = targetUrl;
+                }
+            }, 2000);
+
+            // 小陈科技字样动画
+            brand.style.opacity = 1;
+        }
+
+        // 显示错误
         function showError(message) {
             const errorText = document.getElementById('errorText');
             errorText.textContent = message;
         }
 
-        // 初始检查
+        // 页面加载时初始化
         window.onload = function() {
             const targetUrl = getRedirectUrl();
             if (!targetUrl) {
