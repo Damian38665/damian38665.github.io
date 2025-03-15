@@ -36,6 +36,8 @@
             cursor: pointer;
             transition: all 0.3s ease;
             user-select: none;
+            position: relative;
+            overflow: hidden;
         }
 
         .verification-box:hover {
@@ -105,7 +107,7 @@
         /* 点击扩散效果 */
         .ripple {
             position: absolute;
-            background: rgba(255,255,255,0.5);
+            background: rgba(0, 120, 212, 0.3);
             transform: translate(-50%, -50%);
             pointer-events: none;
             border-radius: 50%;
@@ -139,7 +141,7 @@
         <p>请完成以下验证以继续访问</p>
         
         <!-- 验证框 -->
-        <div class="verification-box" onclick="verify()">
+        <div class="verification-box" onclick="verify(event)">
             <div class="status-text" id="status">✓ 点击方框验证人类身份</div>
         </div>
 
@@ -198,11 +200,27 @@
             }
         }
 
+        // 创建扩散效果
+        function createRipple(event, element) {
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple';
+            
+            const rect = element.getBoundingClientRect();
+            ripple.style.left = `${event.clientX - rect.left}px`;
+            ripple.style.top = `${event.clientY - rect.top}px`;
+            
+            element.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        }
+
         // 验证函数
-        function verify() {
+        function verify(event) {
             const box = document.querySelector('.verification-box');
             const status = document.getElementById('status');
             const continueButton = document.getElementById('continueButton');
+
+            // 添加扩散效果
+            createRipple(event, box);
 
             box.classList.add('verified');
             box.style.cursor = 'default';
@@ -214,21 +232,6 @@
             const targetUrl = getRedirectUrl();
             if (!targetUrl) return;
             displayTargetInfo(targetUrl);
-        }
-
-        // 创建点击扩散效果
-        function createRipple(event) {
-            const button = event.currentTarget;
-            const ripple = document.createElement('div');
-            ripple.className = 'ripple';
-            
-            const rect = button.getBoundingClientRect();
-            ripple.style.left = `${event.clientX - rect.left}px`;
-            ripple.style.top = `${event.clientY - rect.top}px`;
-            
-            button.appendChild(ripple);
-            setTimeout(() => ripple.remove(), 600);
-            startRedirect();
         }
 
         // 开始跳转
