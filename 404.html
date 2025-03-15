@@ -1,104 +1,234 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - 页面未找到</title>
+    <title>学习大作战！</title>
     <style>
-        body, html {
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #4ECDC4;
+        }
+
+        body {
             margin: 0;
-            padding: 0;
-            height: 100%;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            background-color: #000;
-            color: #fff;
-            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #83a4d4 0%, #b6fbff 100%);
+            font-family: 'Comic Sans MS', cursive, sans-serif;
             overflow: hidden;
+            transition: background 0.5s;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+            z-index: 1;
         }
 
         h1 {
-            font-size: 5rem;
-            margin: 0;
+            color: #2c3e50;
+            font-size: 3.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            animation: titleFloat 3s ease-in-out infinite;
         }
 
-        p {
-            font-size: 1.5rem;
-            margin: 10px 0;
-        }
-
-        /* 修改按钮容器样式 */
-        .button-container {
+        .btn-group {
             position: relative;
-            overflow: hidden;
-            display: inline-block;
+            margin-top: 20px;
+            perspective: 1000px;
         }
 
-        .button {
-            padding: 10px 20px;
-            font-size: 1rem;
-            color: #fff;
-            background-color: #4CAF50;
+        #loveBtn {
+            padding: 25px 50px;
+            font-size: 1.8em;
+            background: linear-gradient(145deg, #2ecc71, #27ae60);
+            color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 40px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            position: relative; /* 新增定位 */
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(46,204,113,0.4);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
 
-        .button:hover {
-            background-color: #45a049;
-        }
-
-        /* 修改涟漪效果样式 */
-        .ripple {
+        #hateBtn {
             position: absolute;
-            width: 100px;
-            height: 100px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            animation: ripple-animation 0.6s linear;
-            pointer-events: none;
+            padding: 20px 40px;
+            font-size: 1.5em;
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            border-radius: 35px;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            box-shadow: 0 8px 25px rgba(231,76,60,0.4);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
 
-        @keyframes ripple-animation {
-            to {
-                transform: translate(-50%, -50%) scale(4);
-                opacity: 0;
-            }
+        #loveBtn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(46,204,113,0.6);
+        }
+
+        .confetti {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: confetti 1.8s ease-out forwards;
+            opacity: 0.9;
+        }
+
+        @keyframes confetti {
+            0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--x-end), var(--y-end)) rotate(1080deg); opacity: 0; }
+        }
+
+        .celebrate {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4.5em;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: celebrate 1.2s ease;
+            display: none;
+            background: rgba(255, 107, 107, 0.95);
+            padding: 30px 60px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        @keyframes celebrate {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(-30deg); }
+            50% { transform: translate(-50%, -50%) scale(1.2) rotate(10deg); }
+            100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+        }
+
+        @keyframes titleFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .glow {
+            position: fixed;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,215,0,0.4) 0%, transparent 70%);
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
-    <h1>404</h1>
-    <p>页面未找到，欢迎来到Damian2012的虚无世界</p>
-    
-    <!-- 新增按钮容器 -->
-    <div class="button-container">
-        <button class="button" onclick="window.history.back()">返回上一页</button>
+    <div class="container">
+        <h1>📚 知识大冒险！📚</h1>
+        <div class="btn-group">
+            <button id="loveBtn">超喜欢！✨</button>
+            <button id="hateBtn">达咩！💢</button>
+        </div>
+        <div id="celebrateText" class="celebrate">🎉 发现小书虫！📖</div>
     </div>
 
     <script>
-        // 只监听按钮的点击事件
-        document.querySelector('.button').addEventListener('click', function (e) {
-            // 创建涟漪元素
-            const ripple = document.createElement('div');
-            ripple.className = 'ripple';
-            
-            // 计算相对于按钮的位置
-            const rect = this.getBoundingClientRect();
-            ripple.style.left = `${e.clientX - rect.left}px`;
-            ripple.style.top = `${e.clientY - rect.top}px`;
-            
-            this.appendChild(ripple);
+        const hateBtn = document.getElementById('hateBtn');
+        const loveBtn = document.getElementById('loveBtn');
+        const celebrate = document.getElementById('celebrateText');
+        let scale = 1;
 
-            // 自动移除涟漪元素
-            setTimeout(() => {
-                ripple.remove();
-            }, 600);
+        // 完美边界计算函数
+        const getValidPosition = (element) => {
+            const rect = element.getBoundingClientRect();
+            const maxX = window.innerWidth - rect.width;
+            const maxY = window.innerHeight - rect.height;
+            return {
+                x: Math.max(10, Math.min(Math.random() * maxX, maxX - 10)), // 添加10px的边距
+                y: Math.max(10, Math.min(Math.random() * maxY, maxY - 10))  // 添加10px的边距
+            };
+        };
+
+        hateBtn.addEventListener('click', function(e) {
+            // 按钮缩小动画
+            scale *= 0.85;
+            this.style.transform = `scale(${scale})`;
+            
+            // 获取精确边界位置
+            const { x, y } = getValidPosition(this);
+            this.style.left = `${x}px`;
+            this.style.top = `${y}px`;
+
+            // 华丽粒子特效
+            createParticles(e.clientX, e.clientY, 25, 150);
+        });
+
+        loveBtn.addEventListener('click', function() {
+            celebrate.style.display = 'block';
+            celebrate.style.animation = 'celebrate 1.2s ease';
+            
+            // 背景渐变过渡
+            document.body.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%)';
+            
+            // 按钮互动动画
+            hateBtn.style.display = 'none';
+            this.animate([
+                { transform: 'scale(1)', opacity: 1 },
+                { transform: 'scale(1.5)', opacity: 0.8 },
+                { transform: 'scale(1)', opacity: 1 }
+            ], { duration: 600, easing: 'ease' });
+
+            // 全屏庆祝粒子
+            createParticles(window.innerWidth/2, window.innerHeight/2, 150, 400, true);
+        });
+
+        // 高级粒子生成器
+        function createParticles(x, y, count=20, force=200, isCelebration=false) {
+            for(let i=0; i<count; i++){
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                // 随机属性生成
+                const size = Math.random() * 12 + 8;
+                const hue = Math.random() * 360;
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * force + 100;
+                
+                // 庆祝时全屏随机位置
+                if(isCelebration) {
+                    confetti.style.left = `${Math.random() * window.innerWidth}px`;
+                    confetti.style.top = `${Math.random() * window.innerHeight}px`;
+                } else {
+                    confetti.style.left = `${x}px`;
+                    confetti.style.top = `${y}px`;
+                }
+
+                // 动态样式
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                confetti.style.backgroundColor = `hsla(${hue}, 100%, 50%, ${Math.random()*0.8+0.2})`;
+                confetti.style.boxShadow = `0 2px 8px hsla(${hue}, 100%, 50%, 0.5)`;
+                
+                // 物理运动参数
+                confetti.style.setProperty('--x-end', `${Math.cos(angle)*distance}px`);
+                confetti.style.setProperty('--y-end', `${Math.sin(angle)*distance}px`);
+                
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 1800);
+            }
+        }
+
+        // 添加背景光效
+        document.addEventListener('mousemove', (e) => {
+            const glow = document.createElement('div');
+            glow.className = 'glow';
+            glow.style.left = `${e.clientX - 100}px`;
+            glow.style.top = `${e.clientY - 100}px`;
+            document.body.appendChild(glow);
+            setTimeout(() => glow.remove(), 1000);
         });
     </script>
 </body>
