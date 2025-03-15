@@ -144,6 +144,36 @@
             pointer-events: none;
         }
 
+        /* Toast 通知样式 */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .toast {
+            background: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateX(100%);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast.hide {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+
         @keyframes ripple-animation {
             to {
                 transform: scale(4);
@@ -182,12 +212,15 @@
         <div id="error" class="error"></div>
     </div>
 
+    <!-- Toast 通知容器 -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <script>
         const GITEE_USER = 'damian2021';
         const ACCESS_TOKEN = 'b5a96c2df3774e1a8ded0ff0cc54cdfa';
         const REPO = 'sever666';
         const ROOT_PATH = 'panfiles';
-        const BRANCH = 'master'; // 分支名称
+        const BRANCH = 'master';
 
         let currentPath = ROOT_PATH;
         let pathStack = [];
@@ -200,6 +233,33 @@
             code: 'fa-file-code',
             default: 'fa-file'
         };
+
+        // Toast 通知函数
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+
+            // 根据类型设置背景色
+            if (type === 'success') {
+                toast.style.backgroundColor = '#28a745';
+            } else if (type === 'error') {
+                toast.style.backgroundColor = '#dc3545';
+            }
+
+            toastContainer.appendChild(toast);
+
+            // 显示 Toast
+            setTimeout(() => toast.classList.add('show'), 10);
+
+            // 3秒后隐藏并移除 Toast
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.classList.add('hide');
+                setTimeout(() => toast.remove(), 300); // 等待动画完成
+            }, 3000);
+        }
 
         function createRipple(event) {
             const button = event.currentTarget;
@@ -264,28 +324,31 @@
 
         async function downloadFile(filePath) {
             try {
-                // 使用代理服务器中转下载请求
-                const proxyUrl = `https://cors-anywhere.herokuapp.com/https://gitee.com/${GITEE_USER}/${REPO}/raw/${BRANCH}/${filePath}`;
-                const response = await fetch(proxyUrl, {
-                    headers: {
-                        'Referer': 'https://gitee.com' // 模拟 Gitee 的 Referer
+                // 使用 Gitee 的 raw 文件链接
+                const downloadUrl = `https://gitee.com/${GITEE_USER}/${REPO}/raw/${BRANCH}/${encodeURIComponent(filePath)}?access_token=${ACCESS_TOKEN}`;
+
+                // 创建隐藏的 iframe 触发下载
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = downloadUrl;
+                document.body.appendChild(iframe);
+
+                // 监听 iframe 的加载事件
+                iframe.onload = () => {
+                    document.body.removeChild(iframe);
+                    showToast('文件下载成功！', 'success');
+                };
+
+                // 设置超时，防止 iframe 加载失败
+                setTimeout(() => {
+                    if (iframe.parentNode) {
+                        document.body.removeChild(iframe);
+                        showToast('文件下载失败，请稍后重试', 'error');
                     }
-                });
-
-                if (!response.ok) throw new Error('下载失败');
-
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filePath.split('/').pop();
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
+                }, 5000); // 5秒超时
             } catch (error) {
                 console.error('下载失败:', error);
-                alert('文件下载失败，请稍后重试');
+                showToast('文件下载失败，请稍后重试', 'error');
             }
         }
 
@@ -295,7 +358,7 @@
                 document.getElementById('loading').style.display = 'block';
                 document.getElementById('error').textContent = '';
 
-                const apiUrl = `https://gitee.com/api/v5/repos/${GITEE_USER}/${REPO}/contents/${path}?access_token=${ACCESS_TOKEN}`;
+                const apiUrl = `https://gitee.com/api/v5/repos/${GITEE_USER}/${REPO}/contents/${encodeURIComponent(path)}?access_token=${ACCESS_TOKEN}`;
                 const response = await fetch(apiUrl);
                 if (!response.ok) throw new Error('加载失败');
                 const files = await response.json();
