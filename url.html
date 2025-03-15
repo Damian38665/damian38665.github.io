@@ -152,7 +152,7 @@
         <p id="safetyNotice"></p>
 
         <!-- 继续按钮 -->
-        <button class="continue-button" id="continueButton" onclick="createRipple(event)">继续</button>
+        <button class="continue-button" id="continueButton" onclick="startRedirect(event)">继续</button>
 
         <!-- 错误提示 -->
         <p id="errorText" class="error"></p>
@@ -235,9 +235,12 @@
         }
 
         // 开始跳转
-        function startRedirect() {
+        function startRedirect(event) {
             const continueButton = document.getElementById('continueButton');
             const targetUrlText = document.getElementById('targetUrlText');
+
+            // 添加扩散效果
+            createRipple(event, continueButton);
 
             continueButton.disabled = true;
             continueButton.style.opacity = '0.7';
@@ -245,11 +248,13 @@
             // 显示2秒后跳转
             targetUrlText.textContent += '（2秒后跳转）';
 
+            // 获取目标 URL
+            const targetUrl = getRedirectUrl();
+            if (!targetUrl) return;
+
+            // 2秒后跳转
             setTimeout(() => {
-                const targetUrl = getRedirectUrl();
-                if (targetUrl) {
-                    window.location.href = targetUrl;
-                }
+                window.location.href = targetUrl;
             }, 2000);
         }
 
