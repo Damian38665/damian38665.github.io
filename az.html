@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安卓工具箱</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f2f5;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #1a73e8;
+            text-align: center;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            background: #1a73e8;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #1557b0;
+            transform: translateY(-2px);
+        }
+
+        .warning {
+            background: #ff4444;
+        }
+
+        .warning:hover {
+            background: #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>安卓工具箱</h1>
+        
+        <div class="button-grid">
+            <!-- 文件管理 -->
+            <button onclick="openFileManager()">📁 文件管理</button>
+            
+            <!-- 常用应用 -->
+            <button onclick="openApp('tel:')">📞 电话</button>
+            <button onclick="openApp('mailto:')">📧 邮箱</button>
+            <button onclick="openSettings()">⚙️ 系统设置</button>
+            <button onclick="openApp('https://')">🌐 浏览器</button>
+            
+            <!-- 开发者选项 -->
+            <button class="warning" onclick="openDeveloperOptions()">🛠️ 开发者选项</button>
+        </div>
+    </div>
+
+    <script>
+        // 打开通用应用
+        function openApp(uri) {
+            try {
+                window.location.href = uri;
+            } catch (e) {
+                alert("无法打开应用，请确认设备支持该功能");
+            }
+        }
+
+        // 打开文件管理器
+        function openFileManager() {
+            const intent = `intent:#Intent;action=android.intent.action.VIEW;type=resource/folder;S.browser_fallback_url=http://www.google.com;end`;
+            try {
+                window.location.href = intent;
+            } catch (e) {
+                // 兼容性处理
+                window.open('content://com.android.externalstorage.documents/root/primary');
+            }
+        }
+
+        // 打开系统设置
+        function openSettings() {
+            const intent = "intent:#Intent;action=android.settings.SETTINGS;end";
+            try {
+                window.location.href = intent;
+            } catch (e) {
+                window.open('package:com.android.settings');
+            }
+        }
+
+        // 打开开发者选项
+        function openDeveloperOptions() {
+            if(confirm("修改开发者选项可能导致系统不稳定，确定要继续吗？")) {
+                const intent = "intent:#Intent;action=android.settings.APPLICATION_DEVELOPMENT_SETTINGS;end";
+                try {
+                    window.location.href = intent;
+                } catch (e) {
+                    alert("无法直接打开，请手动前往：设置 > 系统 > 开发者选项");
+                }
+            }
+        }
+    </script>
+</body>
+</html>
