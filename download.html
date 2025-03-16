@@ -325,27 +325,31 @@
         async function downloadFile(filePath) {
             try {
                 // 使用 Gitee 的 raw 文件链接
-                const downloadUrl = `https://gitee.com/${GITEE_USER}/${REPO}/raw/${BRANCH}/${encodeURIComponent(filePath)}?access_token=${ACCESS_TOKEN}`;
+                const rawUrl = `https://gitee.com/${GITEE_USER}/${REPO}/raw/${BRANCH}/${encodeURIComponent(filePath)}?access_token=${ACCESS_TOKEN}`;
 
-                // 创建隐藏的 iframe 触发下载
-                const iframe = document.createElement('iframe');
-                iframe.style.display = 'none';
-                iframe.src = downloadUrl;
-                document.body.appendChild(iframe);
-
-                // 监听 iframe 的加载事件
-                iframe.onload = () => {
-                    document.body.removeChild(iframe);
-                    showToast('文件下载成功！', 'success');
-                };
-
-                // 设置超时，防止 iframe 加载失败
-                setTimeout(() => {
-                    if (iframe.parentNode) {
-                        document.body.removeChild(iframe);
-                        showToast('文件下载失败，请稍后重试', 'error');
+                // 使用 fetch 获取文件内容
+                const response = await fetch(rawUrl, {
+                    headers: {
+                        'Referer': 'https://gitee.com' // 模拟 Gitee 的 Referer
                     }
-                }, 5000); // 5秒超时
+                });
+
+                if (!response.ok) throw new Error('下载失败');
+
+                // 将文件内容转换为 Blob
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+
+                // 创建隐藏的 <a> 标签触发下载
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filePath.split('/').pop(); // 设置下载文件名
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+
+                showToast('文件下载成功！', 'success');
             } catch (error) {
                 console.error('下载失败:', error);
                 showToast('文件下载失败，请稍后重试', 'error');
