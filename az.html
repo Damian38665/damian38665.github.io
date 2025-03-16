@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Android 9工具箱</title>
+    <title>Android 8+ 工具箱</title>
     <style>
-        /* 样式优化 */
+        /* Material Design 风格 */
         body {
             font-family: 'Roboto', sans-serif;
             padding: 20px;
-            background: #121212;
-            color: #ffffff;
+            background: #f5f5f5;
+            color: #212121;
         }
         
         .container {
@@ -19,137 +19,155 @@
         }
 
         h1 {
-            color: #00bcd4;
+            color: #3f51b5;
             text-align: center;
-            text-shadow: 0 2px 4px rgba(0,188,212,0.3);
+            margin-bottom: 30px;
         }
 
         .button-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
-            margin-top: 30px;
         }
 
         button {
             padding: 18px;
             font-size: 16px;
             border: none;
-            border-radius: 12px;
-            background: #2d2d2d;
-            color: white;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #3f51b5;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         button:hover {
-            background: #3d3d3d;
             transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
 
-        .system {
-            background: #2196F3;
-        }
-
-        .tools {
-            background: #FF9800;
+        .primary {
+            background: #3f51b5;
+            color: white;
         }
 
         .warning {
             background: #f44336;
+            color: white;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Android 9 工具箱</h1>
+        <h1>Android 8+ 工具箱</h1>
         
         <div class="button-grid">
-            <!-- 文件管理 -->
-            <button class="system" onclick="openFileManager()">📁 文件管理</button>
-            
             <!-- 系统功能 -->
-            <button class="system" onclick="openDialer()">📞 电话</button>
-            <button class="system" onclick="openEmail()">📧 邮箱</button>
-            <button class="system" onclick="openSettings()">⚙️ 系统设置</button>
-            <button class="system" onclick="openBrowser()">🌐 浏览器</button>
+            <button class="primary" onclick="openFileManager()">📁 文件管理</button>
+            <button class="primary" onclick="openDialer()">📞 电话</button>
+            <button class="primary" onclick="openEmail()">📧 邮箱</button>
+            <button class="primary" onclick="openSettings()">⚙️ 系统设置</button>
+            <button class="primary" onclick="openBrowser()">🌐 浏览器</button>
             
-            <!-- 高级选项 -->
-            <button class="tools" onclick="openAppInfo()">📦 应用信息</button>
+            <!-- 高级功能 -->
             <button class="warning" onclick="openDeveloperOptions()">🛠️ 开发者选项</button>
+            <button onclick="openAppInfo()">📦 应用信息</button>
         </div>
     </div>
 
     <script>
-        // Android 9兼容性处理
+        // 设备检测
         const isAndroid = /android/i.test(navigator.userAgent);
+        const androidVersion = isAndroid ? parseFloat(navigator.userAgent.match(/Android (\d+\.\d+)/)[1]) : 0;
 
-        // 通用打开方式
-        function launchIntent(intentUri, fallbackUrl) {
-            if(isAndroid) {
-                try {
-                    window.location.href = intentUri;
-                    setTimeout(() => {
-                        if(!document.hidden) window.open(fallbackUrl);
-                    }, 500);
-                } catch(e) {
-                    window.open(fallbackUrl);
-                }
-            } else {
-                alert("仅支持Android设备");
+        // 通用启动方法
+        function launchApp(scheme, packageName, fallbackUrl) {
+            if(!isAndroid || androidVersion < 8) {
+                alert("需要Android 8.0及以上版本");
+                return;
+            }
+
+            let intent = `intent://${scheme}#Intent;`;
+            intent += `package=${packageName};`;
+            intent += `scheme=${scheme};`;
+            intent += `action=android.intent.action.VIEW;`;
+            intent += `S.browser_fallback_url=${encodeURIComponent(fallbackUrl)};`;
+            intent += `end`;
+
+            try {
+                window.location.href = intent;
+                setTimeout(() => {
+                    if(!document.hidden) window.open(fallbackUrl);
+                }, 500);
+            } catch(e) {
+                window.open(fallbackUrl);
             }
         }
 
-        // 文件管理器（兼容Android 9+）
+        // 文件管理器
         function openFileManager() {
-            const intent = "intent:#Intent;action=android.intent.action.VIEW;type=resource/folder;S.org.chromium.intent.extra.SHOW_ADVANCED=true;end";
-            const fallback = "content://com.android.externalstorage.documents/root/primary";
-            launchIntent(intent, fallback);
+            launchApp(
+                "content",
+                "com.android.documentsui",
+                "content://com.android.externalstorage.documents/root/primary"
+            );
         }
 
-        // 电话拨号
+        // 电话
         function openDialer() {
-            launchIntent("tel:", "tel:%23%23%23463%23%23%23"); // ###463###
+            launchApp(
+                "tel",
+                "com.android.dialer",
+                "tel:%23%23%23463%23%23%23"
+            );
         }
 
-        // 电子邮件
+        // 邮箱
         function openEmail() {
             window.location.href = "mailto:?subject=工具箱反馈&body=请在此输入内容";
         }
 
         // 系统设置
         function openSettings() {
-            launchIntent(
-                "intent:#Intent;action=android.settings.SETTINGS;end",
+            launchApp(
+                "package",
+                "com.android.settings",
                 "package:com.android.settings"
             );
         }
 
-        // 浏览器（强制使用系统浏览器）
+        // 浏览器
         function openBrowser() {
             const timestamp = new Date().getTime();
-            launchIntent(
-                "intent:#Intent;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;data=http://example.com?"+timestamp+";end",
-                "http://example.com"
+            launchApp(
+                "http",
+                "com.android.chrome",
+                `http://example.com?t=${timestamp}`
             );
         }
 
-        // 开发者选项（Android 9专用）
+        // 开发者选项
         function openDeveloperOptions() {
             if(confirm("警告：开发者选项包含高级设置！")) {
-                launchIntent(
-                    "intent:#Intent;action=android.settings.APPLICATION_DEVELOPMENT_SETTINGS;end",
+                launchApp(
+                    "package",
+                    "com.android.settings",
                     "package:com.android.settings"
                 );
             }
         }
 
-        // 应用信息（备用方案）
+        // 应用信息
         function openAppInfo() {
             const packageName = "com.android.settings";
-            launchIntent(
-                `intent:#Intent;action=android.settings.APPLICATION_DETAILS_SETTINGS;package=${packageName};end`,
+            launchApp(
+                "package",
+                packageName,
                 `package:${packageName}`
             );
         }
