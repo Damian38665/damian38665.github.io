@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>安卓工具箱</title>
+    <title>Android 9工具箱</title>
     <style>
+        /* 样式优化 */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
             padding: 20px;
-            background: #f0f2f5;
+            background: #121212;
+            color: #ffffff;
         }
         
         .container {
@@ -17,8 +19,9 @@
         }
 
         h1 {
-            color: #1a73e8;
+            color: #00bcd4;
             text-align: center;
+            text-shadow: 0 2px 4px rgba(0,188,212,0.3);
         }
 
         .button-grid {
@@ -29,90 +32,126 @@
         }
 
         button {
-            padding: 15px;
+            padding: 18px;
             font-size: 16px;
             border: none;
-            border-radius: 8px;
-            background: #1a73e8;
+            border-radius: 12px;
+            background: #2d2d2d;
             color: white;
             cursor: pointer;
             transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
         button:hover {
-            background: #1557b0;
+            background: #3d3d3d;
             transform: translateY(-2px);
         }
 
-        .warning {
-            background: #ff4444;
+        .system {
+            background: #2196F3;
         }
 
-        .warning:hover {
-            background: #cc0000;
+        .tools {
+            background: #FF9800;
+        }
+
+        .warning {
+            background: #f44336;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>安卓工具箱</h1>
+        <h1>Android 9 工具箱</h1>
         
         <div class="button-grid">
             <!-- 文件管理 -->
-            <button onclick="openFileManager()">📁 文件管理</button>
+            <button class="system" onclick="openFileManager()">📁 文件管理</button>
             
-            <!-- 常用应用 -->
-            <button onclick="openApp('tel:')">📞 电话</button>
-            <button onclick="openApp('mailto:')">📧 邮箱</button>
-            <button onclick="openSettings()">⚙️ 系统设置</button>
-            <button onclick="openApp('https://')">🌐 浏览器</button>
+            <!-- 系统功能 -->
+            <button class="system" onclick="openDialer()">📞 电话</button>
+            <button class="system" onclick="openEmail()">📧 邮箱</button>
+            <button class="system" onclick="openSettings()">⚙️ 系统设置</button>
+            <button class="system" onclick="openBrowser()">🌐 浏览器</button>
             
-            <!-- 开发者选项 -->
+            <!-- 高级选项 -->
+            <button class="tools" onclick="openAppInfo()">📦 应用信息</button>
             <button class="warning" onclick="openDeveloperOptions()">🛠️ 开发者选项</button>
         </div>
     </div>
 
     <script>
-        // 打开通用应用
-        function openApp(uri) {
-            try {
-                window.location.href = uri;
-            } catch (e) {
-                alert("无法打开应用，请确认设备支持该功能");
-            }
-        }
+        // Android 9兼容性处理
+        const isAndroid = /android/i.test(navigator.userAgent);
 
-        // 打开文件管理器
-        function openFileManager() {
-            const intent = `intent:#Intent;action=android.intent.action.VIEW;type=resource/folder;S.browser_fallback_url=http://www.google.com;end`;
-            try {
-                window.location.href = intent;
-            } catch (e) {
-                // 兼容性处理
-                window.open('content://com.android.externalstorage.documents/root/primary');
-            }
-        }
-
-        // 打开系统设置
-        function openSettings() {
-            const intent = "intent:#Intent;action=android.settings.SETTINGS;end";
-            try {
-                window.location.href = intent;
-            } catch (e) {
-                window.open('package:com.android.settings');
-            }
-        }
-
-        // 打开开发者选项
-        function openDeveloperOptions() {
-            if(confirm("修改开发者选项可能导致系统不稳定，确定要继续吗？")) {
-                const intent = "intent:#Intent;action=android.settings.APPLICATION_DEVELOPMENT_SETTINGS;end";
+        // 通用打开方式
+        function launchIntent(intentUri, fallbackUrl) {
+            if(isAndroid) {
                 try {
-                    window.location.href = intent;
-                } catch (e) {
-                    alert("无法直接打开，请手动前往：设置 > 系统 > 开发者选项");
+                    window.location.href = intentUri;
+                    setTimeout(() => {
+                        if(!document.hidden) window.open(fallbackUrl);
+                    }, 500);
+                } catch(e) {
+                    window.open(fallbackUrl);
                 }
+            } else {
+                alert("仅支持Android设备");
             }
+        }
+
+        // 文件管理器（兼容Android 9+）
+        function openFileManager() {
+            const intent = "intent:#Intent;action=android.intent.action.VIEW;type=resource/folder;S.org.chromium.intent.extra.SHOW_ADVANCED=true;end";
+            const fallback = "content://com.android.externalstorage.documents/root/primary";
+            launchIntent(intent, fallback);
+        }
+
+        // 电话拨号
+        function openDialer() {
+            launchIntent("tel:", "tel:%23%23%23463%23%23%23"); // ###463###
+        }
+
+        // 电子邮件
+        function openEmail() {
+            window.location.href = "mailto:?subject=工具箱反馈&body=请在此输入内容";
+        }
+
+        // 系统设置
+        function openSettings() {
+            launchIntent(
+                "intent:#Intent;action=android.settings.SETTINGS;end",
+                "package:com.android.settings"
+            );
+        }
+
+        // 浏览器（强制使用系统浏览器）
+        function openBrowser() {
+            const timestamp = new Date().getTime();
+            launchIntent(
+                "intent:#Intent;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;data=http://example.com?"+timestamp+";end",
+                "http://example.com"
+            );
+        }
+
+        // 开发者选项（Android 9专用）
+        function openDeveloperOptions() {
+            if(confirm("警告：开发者选项包含高级设置！")) {
+                launchIntent(
+                    "intent:#Intent;action=android.settings.APPLICATION_DEVELOPMENT_SETTINGS;end",
+                    "package:com.android.settings"
+                );
+            }
+        }
+
+        // 应用信息（备用方案）
+        function openAppInfo() {
+            const packageName = "com.android.settings";
+            launchIntent(
+                `intent:#Intent;action=android.settings.APPLICATION_DETAILS_SETTINGS;package=${packageName};end`,
+                `package:${packageName}`
+            );
         }
     </script>
 </body>
