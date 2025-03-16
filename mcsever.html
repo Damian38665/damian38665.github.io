@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MC服务器中文版下载</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .download-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #2d3748;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        .file-info {
+            background: #f7fafc;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .file-name {
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .extract-code {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .code-box {
+            background: #edf2f7;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .copy-btn {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #3182ce;
+        }
+
+        .download-btn {
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            position: relative;
+        }
+
+        .download-btn:hover {
+            background: #38a169;
+        }
+
+        .loading {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .tip {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="download-card">
+        <h1>MC服务器中文版 DVD 镜像下载</h1>
+        
+        <div class="file-info">
+            <div class="file-name">文件名：mcsever_Chinese_DVD.iso</div>
+            <div class="file-size">文件大小：5.61 GB</div>
+        </div>
+
+        <div class="extract-code">
+            <span class="code-box" id="code">a26y</span>
+            <button class="copy-btn" onclick="copyCode()">复制提取码</button>
+        </div>
+
+        <button class="download-btn" onclick="startDownload()">
+            <span>前往下载页面</span>
+            <div class="loading" id="loading"></div>
+        </button>
+
+        <p class="tip">如果复制失败，请手动选择上方代码进行复制</p>
+    </div>
+
+    <script>
+        function copyCode() {
+            const code = document.getElementById('code').innerText;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                alert('提取码已复制到剪贴板！');
+            }).catch(err => {
+                // 备用复制方案
+                const textArea = document.createElement('textarea');
+                textArea.value = code;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('已自动选择提取码，请按Ctrl+C复制');
+            });
+        }
+
+        function startDownload() {
+            const btn = document.querySelector('.download-btn');
+            const loading = document.getElementById('loading');
+            const btnText = btn.querySelector('span');
+            
+            btn.disabled = true;
+            btnText.style.opacity = '0';
+            loading.style.display = 'block';
+            
+            setTimeout(() => {
+                window.location.href = 'https://damian38665.github.io/url.html?url=https://www.alipan.com/s/LcrwgpfNS9a';
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
