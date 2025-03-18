@@ -40,36 +40,6 @@
             overflow-x: hidden;
         }
 
-        /* 加载动画样式 */
-        #loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 999;
-            transition: opacity 0.3s ease;
-        }
-
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border-top-color: var(--primary-color);
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
         /* 动态背景样式 */
         .background-circles {
             position: absolute;
@@ -196,6 +166,13 @@
 
         #about {
             display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        #home {
+            opacity: 1;
+            transition: opacity 0.5s ease;
         }
 
         /* 模式切换开关样式 */
@@ -239,9 +216,6 @@
 </head>
 
 <body>
-    <div id="loading">
-        <div class="spinner"></div>
-    </div>
     <div class="background-circles">
         <span style="width: 20px; height: 20px; background: rgba(0, 123, 255, 0.2); bottom: -20px; left: 10%; animation-delay: 0s;"></span>
         <span style="width: 40px; height: 40px; background: rgba(0, 123, 255, 0.2); bottom: -40px; left: 20%; animation-delay: 2s;"></span>
@@ -304,15 +278,6 @@
     </div>
 
     <script>
-        // 模拟加载完成
-        window.addEventListener('load', function () {
-            const loading = document.getElementById('loading');
-            loading.style.opacity = 0;
-            setTimeout(() => {
-                loading.style.display = 'none';
-            }, 300);
-        });
-
         function openNav() {
             document.getElementById("sidebar").style.width = "250px";
         }
@@ -322,13 +287,25 @@
         }
 
         function showHome() {
-            document.getElementById("home").style.display = "block";
-            document.getElementById("about").style.display = "none";
+            const home = document.getElementById("home");
+            const about = document.getElementById("about");
+            home.style.display = "block";
+            about.style.display = "none";
+            setTimeout(() => {
+                home.style.opacity = 1;
+                about.style.opacity = 0;
+            }, 50);
         }
 
         function showAbout() {
-            document.getElementById("home").style.display = "none";
-            document.getElementById("about").style.display = "block";
+            const home = document.getElementById("home");
+            const about = document.getElementById("about");
+            home.style.opacity = 0;
+            setTimeout(() => {
+                home.style.display = "none";
+                about.style.display = "block";
+                about.style.opacity = 1;
+            }, 500);
         }
 
         // 模式切换功能
