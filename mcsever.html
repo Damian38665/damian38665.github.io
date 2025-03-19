@@ -341,9 +341,9 @@
     <!-- 镜像下载信息页面 -->
     <div id="mirror-info-page">
         <h3 data-lang-key="mirror-info-title">镜像文件信息</h3>
-        <p data-lang-key="mirror-file-name">文件名：mcsever_Chinese_DVD.iso</p>
-        <p data-lang-key="mirror-file-size">文件大小：5.61 GB</p>
-        <p data-lang-key="mirror-extract-code">提取码：<span id="extract-code">a26y</span></p>
+        <p><span data-lang-key="mirror-file-name">文件名：</span>mcsever_Chinese_DVD.iso</p>
+        <p><span data-lang-key="mirror-file-size">文件大小：</span>5.61 GB</p>
+        <p><span data-lang-key="mirror-extract-code">提取码：</span><span id="extract-code">a26y</span></p>
         <button onclick="copyExtractCode()">
             <span data-lang-key="copy-extract-code">复制提取码</span>
         </button>
@@ -428,7 +428,22 @@
                     showCustomAlert(getTranslation('copy-success'));
                 })
               .catch((err) => {
-                    showCustomAlert(getTranslation('copy-fail') + err);
+                    // 尝试使用 execCommand 方法
+                    const textArea = document.createElement('textarea');
+                    textArea.value = code;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    try {
+                        const successful = document.execCommand('copy');
+                        if (successful) {
+                            showCustomAlert(getTranslation('copy-success'));
+                        } else {
+                            showCustomAlert(getTranslation('copy-fail') + 'execCommand 复制失败');
+                        }
+                    } catch (e) {
+                        showCustomAlert(getTranslation('copy-fail') + e);
+                    }
+                    document.body.removeChild(textArea);
                 });
         }
 
@@ -449,8 +464,8 @@
                 "about-developer-title": "关于开发者",
                 "about-developer-content": "开发者：Damian2012, goforwalk, fish",
                 "mirror-info-title": "镜像文件信息",
-                "mirror-file-name": "文件名：mcsever_Chinese_DVD.iso",
-                "mirror-file-size": "文件大小：5.61 GB",
+                "mirror-file-name": "文件名：",
+                "mirror-file-size": "文件大小：",
                 "mirror-extract-code": "提取码：",
                 "copy-extract-code": "复制提取码",
                 "go-to-download": "前往网盘下载",
@@ -472,8 +487,8 @@
                 "about-developer-title": "About Developers",
                 "about-developer-content": "Developers: Damian2012, goforwalk, fish",
                 "mirror-info-title": "Mirror File Information",
-                "mirror-file-name": "File Name: mcsever_Chinese_DVD.iso",
-                "mirror-file-size": "File Size: 5.61 GB",
+                "mirror-file-name": "File Name: ",
+                "mirror-file-size": "File Size: ",
                 "mirror-extract-code": "Extraction Code: ",
                 "copy-extract-code": "Copy Extraction Code",
                 "go-to-download": "Go to Cloud Disk Download",
