@@ -1,0 +1,111 @@
+---
+layout: post
+title: "Auto-Py-to-Exe完美打包python程序"
+date:   2025-4-12
+tags: [python]
+comments: true
+author: Damiam2012
+---
+
+###### 说明：这文章是讲解如何python转exe
+
+<!-- more -->
+
+Auto-Py-to-Exe完美打包python程序
+==========================
+
+**[Auto PY to EXE](https://pypi.org/project/auto-py-to-exe/)**是一个[PyInstaller](https://www.pyinstaller.org/)构建的、通过简单的UI界面将python项目中的`.py`文件(可以是单个py文件或多个py文件)打包为`.exe`文件的简单工具，与PyInstaller相比，Auto PY to EXE更简单直观，可以自动生成执行转换代码，进而将python程序打包为exe文件。
+模块安装
+
+----
+
+环境要求：
+
+* [Python环境](https://zhida.zhihu.com/search?content_id=117093242&content_type=Article&match_order=1&q=Python%E7%8E%AF%E5%A2%83&zd_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ6aGlkYV9zZXJ2ZXIiLCJleHAiOjE3NDQ1NTA3MjQsInEiOiJQeXRob27njq_looMiLCJ6aGlkYV9zb3VyY2UiOiJlbnRpdHkiLCJjb250ZW50X2lkIjoxMTcwOTMyNDIsImNvbnRlbnRfdHlwZSI6IkFydGljbGUiLCJtYXRjaF9vcmRlciI6MSwiemRfdG9rZW4iOm51bGx9.hfHl0Z-Yi1TNSRWtvKoIbNroe-Gd3Pa-_oGTqA6NELI&zhida_source=entity)：python>=2.7
+* 浏览器：用于显示操作界面，Chrome或者默认浏览器
+
+模块安装：
+    pip install auto-py-to-exe
+
+或通过[GitHub](https://zhida.zhihu.com/search?content_id=117093242&content_type=Article&match_order=1&q=GitHub&zd_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ6aGlkYV9zZXJ2ZXIiLCJleHAiOjE3NDQ1NTA3MjQsInEiOiJHaXRIdWIiLCJ6aGlkYV9zb3VyY2UiOiJlbnRpdHkiLCJjb250ZW50X2lkIjoxMTcwOTMyNDIsImNvbnRlbnRfdHlwZSI6IkFydGljbGUiLCJtYXRjaF9vcmRlciI6MSwiemRfdG9rZW4iOm51bGx9.SqCK6VNQW2zHxk8YbHaPy71mIYZiVcIliA9xqvG9LXo&zhida_source=entity)安装：
+    git clone https://github.com/brentvollebregt/auto-py-to-exe.git
+    cd auto-py-to-exe
+    python setup.py install
+使用方法
+
+----
+
+通过如下命令行，启动Auto PY to EXE：
+    auto-py-to-exe
+
+![](https://pica.zhimg.com/v2-ed02de0190c6dd339eb5deb80634281a_1440w.jpg)
+
+Auto Py to Exe界面
+
+* 添加要打包的py脚本路径(Script Location)。
+* 选择输出文件类型(Onefile)：一个文件目录或者一个exe文件。一个目录，即将所有程序依赖的文件放到一个文件夹下，也可以在高级(Advanced)选项中选择输出目录；而一个文件是创建一个exe文件，如果python程序中没有图片、音频等文件时可以选择此项，其实有图片、音频等文件也可以选择生成一个exe文件。
+* 控制台窗口(Console Window)：设置生成的exe程序是否显示控制台，一般选择隐藏控制台界面，即Window Based (hide the console)。
+* 添加程序图标(Icon)：指定生成的exe程序的图标路径；
+* 选择附加文件(Additional Files)：附加文件选项可以添加工程所需的附属文件。但是Auto PY to EXE是使用pyinstaller将数据解压缩到一个临时文件夹中，并将此目录路径存储到`_MEIPASS`环境变量中，文件路径的改变导致我们项目中找不到所需的文件。如果选择生成一个exe文件，在附加文件选项中选择的文件不能被添加到exe文件中。解决方法如下：
+
+定义资源路径函数：
+    def resource_path(relative_path):
+        """获取程序中所需文件资源的绝对路径"""
+        try:
+            # PyInstaller创建临时文件夹,将路径存储于_MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+        return os.path.join(base_path, relative_path)
+
+更改代码中的媒体文件路径(示例)：
+    # 原来文件路径代码
+    self.setWindowIcon(QIcon('images/window.svg'))
+    splash.setPixmap(QPixmap('images/fish.jpg'))
+    ...
+    # 将上述代码更改为
+    self.setWindowIcon(QIcon(resource_path('images/window.svg')))
+    splash.setPixmap(QPixmap(resource_path('images/fish.jpg')))
+    ...
+
+如此，代码中的图片等其他文件可以被正确打包至exe文件中。
+
+* 上述配置完成后，Auto PY to EXE的命令窗(Current Command)会显示当前配置的代码。
+* 最后点击CONVERT .PY TO .EXE按钮执行就可以了。
+
+转换示例
+----
+
+以[la vie](https://www.zhihu.com/people/la-vie-est-belle)大佬的[《快速掌握PyQt5》的第23章](https://zhuanlan.zhihu.com/p/75644237)为例，其中chapter2101.py是要打包的程序，文件夹images是程序中所需的[图片](https://link.zhihu.com/?target=https%3A//www.iconfont.cn/collections/detail%3Fcid%3D18649)，window.ico为生成exe文件的桌面图标。
+
+![](https://pic3.zhimg.com/v2-2c9d9cb90c3e68736b4131a00b18154e_1440w.jpg)
+
+转换所需的文件
+
+Auto PY to EXE的基本配置为：
+
+![](https://pic3.zhimg.com/v2-ac189288d19c2c816ee446937f675704_1440w.jpg)
+
+Auto PY to EXE的基本配置
+
+执行结果为：
+
+![](https://picx.zhimg.com/v2-b670be001e42641bb43db2cf1bddc7b1_1440w.jpg)
+
+Auto PY to EXE执行过程
+
+转换完成后，Auto PY to EXE将打包的exe文件默认输出到路径`C:\Users\<user>\output`下，即
+
+![](https://pic3.zhimg.com/v2-c59a540716648ea7fb492fc0003228f8_1440w.jpg)
+
+转换后的exe文件
+
+转换后exe文件所打开后界面如下：
+
+![动图封面](https://pic3.zhimg.com/v2-ee12c6d16e0de69997c3c519d92bcd50_b.jpg)
+要点总结
+
+----
+
+* Auto PY to EXE的安装和基本配置；
+* 更改Python代码中所需资源文件的路径。
