@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <title>文件浏览器</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .hover-effect:hover {
+            background-color: #f3f4f6;
+            transform: scale(1.02);
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <div class="container mx-auto p-8">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">服务器文件浏览器</h1>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <ul id="file-list" class="space-y-4">
+                <!-- 文件列表将通过 JavaScript 动态添加 -->
+            </ul>
+            <p id="error-message" class="text-red-500 hidden">获取文件列表时出错，请检查服务器配置。</p>
+        </div>
+    </div>
+    <script>
+        const fileList = document.getElementById('file-list');
+        const errorMessage = document.getElementById('error-message');
+
+        fetch('./')
+           .then(response => {
+                if (!response.ok) {
+                    throw new Error('网络响应不正常');
+                }
+                return response.text();
+            })
+           .then(data => {
+                const parser = new DOMParser();
+                const htmlDoc = parser.parseFromString(data, 'text/html');
+                const links = htmlDoc.querySelectorAll('a');
+
+                links.forEach(link => {
+                    const fileName = link.textContent;
+                    if (fileName!== '.' && fileName!== '..') {
+                        const listItem = document.createElement('li');
+                        listItem.classList.add('flex', 'items-center', 'justify-between', 'p-4', 'border-b', 'border-gray-200', 'hover-effect');
+
+                        const fileNameElement = document.createElement('span');
+                        fileNameElement.textContent = fileName;
+                        fileNameElement.classList.add('text-gray-700', 'font-medium');
+
+                        const downloadLink = document.createElement('a');
+                        downloadLink.href = fileName;
+                        downloadLink.download = fileName;
+                        downloadLink.classList.add('text-blue-500', 'hover:text-blue-700', 'flex', 'items-center');
+                        const downloadIcon = document.createElement('i');
+                        downloadIcon.classList.add('fas', 'fa-download', 'mr-2');
+                        downloadLink.appendChild(downloadIcon);
+                        downloadLink.appendChild(document.createTextNode('下载'));
+
+                        listItem.appendChild(fileNameElement);
+                        listItem.appendChild(downloadLink);
+                        fileList.appendChild(listItem);
+                    }
+                });
+            })
+           .catch(error => {
+                console.error('获取文件列表时出错:', error);
+                errorMessage.classList.remove('hidden');
+            });
+    </script>
+</body>
+
+</html>
+    
