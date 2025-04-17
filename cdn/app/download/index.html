@@ -24,14 +24,15 @@
         const errorMsg = document.getElementById('error-msg');
 
         fetch('./')
-            .then(res => {
+           .then(res => {
                 if (!res.ok) throw new Error(`HTTP错误！状态码：${res.status}`);
                 return res.text();
             })
-            .then(html => {
+           .then(html => {
+                console.log('服务器响应内容:', html); // 输出服务器响应内容到控制台
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
-                const entries = doc.querySelectorAll('a:not([href="."]):not([href=".."])'); // 优化选择器
+                const entries = doc.querySelectorAll('a:not([href="."]):not([href=".."])');
 
                 if (entries.length === 0) {
                     errorMsg.textContent = '未找到文件，确认服务器目录索引已开启且有文件。';
@@ -61,7 +62,7 @@
                     fileList.appendChild(listItem);
                 });
             })
-            .catch(err => {
+           .catch(err => {
                 console.error('获取文件列表失败：', err);
                 errorMsg.textContent = `获取文件失败：${err.message}`;
                 errorMsg.classList.remove('hidden');
