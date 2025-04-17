@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,75 +7,65 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
     <title>文件浏览器</title>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-
-        .hover-effect:hover {
-            background-color: #f3f4f6;
-            transform: scale(1.02);
-            transition: all 0.3s ease;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        .hover-effect:hover { background-color: #f3f4f6; transform: scale(1.02); transition: all 0.3s ease; }
     </style>
 </head>
-
 <body class="bg-gray-100">
     <div class="container mx-auto p-8">
         <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">服务器文件浏览器</h1>
         <div class="bg-white p-6 rounded-lg shadow-md">
-            <ul id="file-list" class="space-y-4">
-                <!-- 文件列表将通过 JavaScript 动态添加 -->
-            </ul>
-            <p id="error-message" class="text-red-500 hidden">获取文件列表时出错，请检查服务器配置。</p>
+            <ul id="file-list" class="space-y-4"></ul>
+            <p id="error-msg" class="text-red-500 mt-4 hidden">获取文件失败，请检查服务器配置或网络。</p>
         </div>
     </div>
     <script>
         const fileList = document.getElementById('file-list');
-        const errorMessage = document.getElementById('error-message');
+        const errorMsg = document.getElementById('error-msg');
 
         fetch('./')
-           .then(response => {
-                if (!response.ok) {
-                    throw new Error('网络响应不正常');
-                }
-                return response.text();
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP错误！状态码：${res.status}`);
+                return res.text();
             })
-           .then(data => {
+            .then(html => {
                 const parser = new DOMParser();
-                const htmlDoc = parser.parseFromString(data, 'text/html');
-                const links = htmlDoc.querySelectorAll('a');
+                const doc = parser.parseFromString(html, 'text/html');
+                const entries = doc.querySelectorAll('a:not([href="."]):not([href=".."])'); // 优化选择器
 
-                links.forEach(link => {
-                    const fileName = link.textContent;
-                    if (fileName!== '.' && fileName!== '..') {
-                        const listItem = document.createElement('li');
-                        listItem.classList.add('flex', 'items-center', 'justify-between', 'p-4', 'border-b', 'border-gray-200', 'hover-effect');
+                if (entries.length === 0) {
+                    errorMsg.textContent = '未找到文件，确认服务器目录索引已开启且有文件。';
+                    errorMsg.classList.remove('hidden');
+                    return;
+                }
 
-                        const fileNameElement = document.createElement('span');
-                        fileNameElement.textContent = fileName;
-                        fileNameElement.classList.add('text-gray-700', 'font-medium');
+                entries.forEach(link => {
+                    const fileName = link.textContent.trim();
+                    if (!fileName) return;
 
-                        const downloadLink = document.createElement('a');
-                        downloadLink.href = fileName;
-                        downloadLink.download = fileName;
-                        downloadLink.classList.add('text-blue-500', 'hover:text-blue-700', 'flex', 'items-center');
-                        const downloadIcon = document.createElement('i');
-                        downloadIcon.classList.add('fas', 'fa-download', 'mr-2');
-                        downloadLink.appendChild(downloadIcon);
-                        downloadLink.appendChild(document.createTextNode('下载'));
+                    const listItem = document.createElement('li');
+                    listItem.className = 'flex items-center justify-between p-4 border-b border-gray-200 hover-effect';
 
-                        listItem.appendChild(fileNameElement);
-                        listItem.appendChild(downloadLink);
-                        fileList.appendChild(listItem);
-                    }
+                    const span = document.createElement('span');
+                    span.textContent = fileName;
+                    span.className = 'text-gray-700 font-medium';
+
+                    const download = document.createElement('a');
+                    download.href = fileName;
+                    download.download = fileName;
+                    download.className = 'text-blue-500 hover:text-blue-700 flex items-center';
+                    download.innerHTML = '<i class="fas fa-download mr-2"></i> 下载';
+
+                    listItem.appendChild(span);
+                    listItem.appendChild(download);
+                    fileList.appendChild(listItem);
                 });
             })
-           .catch(error => {
-                console.error('获取文件列表时出错:', error);
-                errorMessage.classList.remove('hidden');
+            .catch(err => {
+                console.error('获取文件列表失败：', err);
+                errorMsg.textContent = `获取文件失败：${err.message}`;
+                errorMsg.classList.remove('hidden');
             });
     </script>
 </body>
-
 </html>
-    
