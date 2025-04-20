@@ -12,7 +12,7 @@ navigation:
   - name: 分类
     url: /tags
   - name: 帮助
-    url: /learn
+    url: /help
 
 paginate: 8
 
