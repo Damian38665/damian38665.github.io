@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MC服务器完整指南系统</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --success: #2ecc71;
+            --error: #e74c3c;
+        }
+
+        /* 基础样式 */
+        body {
+            font-family: -apple-system, system-ui, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background: #f8f9fa;
+        }
+
+        h1, h2 {
+            color: #2c3e50;
+            margin: 1.5em 0 0.8em;
+        }
+
+        /* 下载模块 */
+        .download-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .download-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            margin: 1rem 0;
+            background: var(--primary);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* 服务器模块 */
+        .server-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .server-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            margin: 1rem 0;
+            background: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .server-item:hover {
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        /* 教程系统 */
+        .tutorial-system {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .tutorial-step {
+            margin: 2rem 0;
+        }
+
+        .tutorial-img {
+            width: 100%;
+            border-radius: 8px;
+            cursor: zoom-in;
+            transition: transform 0.2s;
+        }
+
+        .tutorial-img:hover {
+            transform: scale(1.02);
+        }
+
+        /* 图片放大系统 */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            cursor: zoom-out;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            margin: 2% auto;
+            padding: 20px;
+        }
+
+        #zoomed-img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        /* 版权声明 */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            margin-top: 3rem;
+            border-top: 1px solid #eee;
+        }
+
+        /* 通知系统 */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            color: white;
+            font-weight: 500;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .show-notification {
+            opacity: 1;
+            bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Minecraft 服务器完整指南系统</h1>
+
+    <!-- 下载系统 -->
+    <div class="download-section">
+        <h2>📦 客户端下载</h2>
+        <a href="#" class="download-btn" onclick="handleDownload(event, 'HCML')">
+            HCML 客户端下载
+        </a>
+        <a href="https://lz.qaiu.top/d/lz/ipJAi2xc500d@pcl2" 
+           class="download-btn"
+           onclick="handleDownload(event, 'PCL2')">
+            PCL2 启动器下载
+        </a>
+    </div>
+
+    <!-- 服务器系统 -->
+    <div class="server-section">
+        <h2>🌐 服务器信息</h2>
+        <div class="server-item" onclick="copyAddress('主服务器：mcclub.2m.pub')">
+            <span>主服务器地址</span>
+            <code>mcclub.2m.pub</code>
+        </div>
+        <div class="server-item" onclick="copyAddress('备用服务器：xm.rainplay.cn:38545')">
+            <span>备用服务器地址</span>
+            <code>xm.rainplay.cn:38545</code>
+        </div>
+        <div class="version-info">
+            <small>当前服务器版本：1.20.1</small>
+        </div>
+    </div>
+
+    <!-- 教程系统 -->
+    <div class="tutorial-system">
+        <h2>📚 连接教程</h2>
+        
+        <div class="tutorial-step">
+            <h3>步骤 1 - 打开多人游戏</h3>
+            <img src="https://damian38665.github.io/p/1.png" 
+                 class="tutorial-img" 
+                 alt="打开多人游戏界面"
+                 onclick="zoomImage(this)">
+        </div>
+
+        <div class="tutorial-step">
+            <h3>步骤 2 - 添加服务器</h3>
+            <img src="https://damian38665.github.io/p/2.png"
+                 class="tutorial-img"
+                 alt="添加服务器界面"
+                 onclick="zoomImage(this)">
+        </div>
+
+        <div class="tutorial-step">
+            <h3>步骤 3 - 输入服务器地址</h3>
+            <img src="https://damian38665.github.io/p/3.png"
+                 class="tutorial-img"
+                 alt="输入服务器地址界面"
+                 onclick="zoomImage(this)">
+        </div>
+
+        <div class="tutorial-step">
+            <h3>步骤 4 - 完成设置</h3>
+            <img src="https://damian38665.github.io/p/4.png"
+                 class="tutorial-img"
+                 alt="完成设置界面"
+                 onclick="zoomImage(this)">
+        </div>
+
+        <div class="tutorial-step">
+            <h3>步骤 5 - 加入游戏</h3>
+            <img src="https://damian38665.github.io/p/5.png"
+                 class="tutorial-img"
+                 alt="加入游戏界面"
+                 onclick="zoomImage(this)">
+        </div>
+    </div>
+
+    <!-- 图片放大系统 -->
+    <div class="image-modal" onclick="closeZoom()">
+        <span class="close-btn" onclick="closeZoom()">&times;</span>
+        <div class="modal-content">
+            <img id="zoomed-img" src="" alt="放大查看">
+        </div>
+    </div>
+
+    <!-- 版权声明 -->
+    <footer>
+        <p>© 2023 Damian2012. 服务器及所有内容版权归属 Damian2012</p>
+        <p>本系统仅供玩家交流使用，严禁商业用途</p>
+    </footer>
+
+    <!-- 通知系统 -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // 增强版复制功能
+        async function copyAddress(text) {
+            try {
+                const [label, address] = text.split(/：|:/);
+                const cleanAddress = address.trim();
+                
+                if (navigator.clipboard) {
+                    await navigator.clipboard.writeText(cleanAddress);
+                } else {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = cleanAddress;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                }
+                showNotification(`✅ 已复制 ${label}：${cleanAddress}`, 'success');
+            } catch (err) {
+                showNotification('❌ 复制失败，请手动选择复制', 'error');
+            }
+        }
+
+        // 图片放大系统
+        function zoomImage(imgElement) {
+            const modal = document.querySelector('.image-modal');
+            const zoomedImg = document.getElementById('zoomed-img');
+            zoomedImg.src = imgElement.src;
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeZoom() {
+            document.querySelector('.image-modal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // 下载处理系统
+        function handleDownload(event, client) {
+            if (client === 'HCML') {
+                event.preventDefault();
+                showNotification('⏳ HCML 客户端维护中，预计23:00恢复下载', 'warning');
+            }
+        }
+
+        // 通知系统
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification';
+            
+            const colors = {
+                success: '#2ecc71',
+                error: '#e74c3c',
+                warning: '#f1c40f',
+                info: '#3498db'
+            };
+            
+            notification.style.backgroundColor = colors[type];
+            notification.classList.add('show-notification');
+            
+            setTimeout(() => {
+                notification.classList.remove('show-notification');
+            }, 3000);
+        }
+
+        // ESC键关闭图片
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeZoom();
+        });
+    </script>
+</body>
+</html>
