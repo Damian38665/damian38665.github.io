@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加载中</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#000000',
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .animate-wave {
+                animation: wave 2s ease-in-out infinite;
+            }
+        }
+
+        @keyframes wave {
+            0%, 40%, 100% { transform: scaleY(0.2); }
+            20% { transform: scaleY(1); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-lg p-8 max-w-md w-full">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">加载中</h1>
+            <p class="text-gray-500 mt-2">请稍候，我们正在处理您的请求...</p>
+        </div>
+        
+        <div class="flex justify-center items-center h-24">
+            <div class="flex space-x-2">
+                <div class="w-4 h-16 bg-primary animate-wave" style="animation-delay: -0.5s"></div>
+                <div class="w-4 h-16 bg-primary animate-wave" style="animation-delay: -0.4s"></div>
+                <div class="w-4 h-16 bg-primary animate-wave" style="animation-delay: -0.3s"></div>
+                <div class="w-4 h-16 bg-primary animate-wave" style="animation-delay: -0.2s"></div>
+                <div class="w-4 h-16 bg-primary animate-wave" style="animation-delay: -0.1s"></div>
+            </div>
+        </div>
+        
+        <div class="mt-6 text-center">
+            <div class="inline-block text-gray-500 text-sm">
+                <i class="fa fa-circle-o-notch fa-spin mr-1"></i> 处理中
+            </div>
+        </div>
+    </div>
+
+    <script>
+        setTimeout(() => {
+            window.location.href = '1.html';
+        }, 2000);
+    </script>
+</body>
+</html>
+    
