@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>小陈工作室 - 无广告软件开发专家</title>
     <meta name="description" content="小陈工作室专注于无广告软件的开发与维护，提供纯净、高效的软件解决方案，打造无干扰的用户体验。">
-    <meta name="keywords" content="无广告软件, 软件开发, 纯净软件, 小陈工作室, 镜像站">
+    <meta name="keywords" content="无广告软件, 软件开发, 纯净软件, 小陈工作室, 软件优化, 镜像站">
     <meta name="author" content="小陈工作室">
     <meta name="robots" content="index, follow">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -75,6 +75,43 @@
                 transform: translateY(-5px);
                 box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
             }
+            .loading-bar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 3px;
+                background-color: #3b82f6;
+                width: 0%;
+                z-index: 1000;
+                transition: width 0.3s ease;
+            }
+            .page-loading {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: #ffffff;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+                transition: opacity 0.5s ease;
+            }
+            .page-loading .loader-icon {
+                width: 60px;
+                height: 60px;
+                border: 6px solid #f3f3f3;
+                border-top: 6px solid #3b82f6;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin-bottom: 20px;
+            }
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
         }
         
         @keyframes float {
@@ -98,9 +135,24 @@
                 transform: translateY(0);
             }
         }
+        
+        @keyframes loader {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
     </style>
 </head>
 <body class="font-inter bg-light text-dark">
+    <!-- 页面加载动画 -->
+    <div id="pageLoader" class="page-loading">
+        <div class="loader-icon"></div>
+        <h3 class="text-primary font-bold text-xl">小陈工作室</h3>
+    </div>
+
+    <!-- 加载条 -->
+    <div id="loader" class="loading-bar"></div>
+
     <!-- 导航栏 -->
     <nav id="mainNav" class="fixed w-full z-50 transition-all duration-500 ease-in-out">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
@@ -175,12 +227,13 @@
                 <div class="relative">
                     <div class="absolute -top-4 -left-4 w-24 h-24 bg-primary/10 rounded-lg"></div>
                     <div class="absolute -bottom-4 -right-4 w-24 h-24 bg-primary/10 rounded-lg"></div>
-                    <img src="https://picsum.photos/600/400?random=1" alt="小陈工作室团队" class="rounded-xl shadow-2xl relative z-10 animate-scale">
+                    <!-- 使用固定图片链接，避免刷新时更换 -->
+                    <img src="https://picsum.photos/seed/team/600/400" alt="小陈工作室团队" class="rounded-xl shadow-2xl relative z-10 animate-scale" id="teamImage">
                 </div>
                 <div>
                     <h3 class="text-2xl font-bold mb-6 text-primary">我们的使命</h3>
                     <p class="text-gray-700 mb-6 leading-relaxed">
-                        在当今广告泛滥的数字世界中，我们坚持为用户提供真正无广告、无弹窗的纯净软件。我们相信，好的软件应该以用户体验为核心，而不是被广告所干扰。
+                        在当今软件广告泛滥的数字世界中，我们坚持为用户提供真正无广告、无弹窗的纯净软件。我们相信，好的软件应该以用户体验为核心，而不是被广告所干扰。
                     </p>
                     
                     <div class="mb-8">
@@ -194,7 +247,7 @@
                             <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4">
                                 <i class="fas fa-check text-primary"></i>
                             </div>
-                            <span class="font-medium">高效性能优化</span>
+                            <span class="font-medium">性能优化</span>
                         </div>
                         <div class="flex items-center">
                             <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4">
@@ -206,7 +259,7 @@
                     
                     <h3 class="text-2xl font-bold mb-6 text-primary">我们的理念</h3>
                     <p class="text-gray-700 leading-relaxed">
-                        简洁而不简单，高效而不冗余。我们注重软件的每一个细节，从界面设计到功能实现，都力求做到极致，让用户在使用过程中感受到流畅与便捷。
+                        简洁而不简单，高效而不冗余。我们注重软件的每一个细节，从界面设计到功能实现，都力求做到极致，让用户在使用软件过程中感受到流畅与便捷。
                     </p>
                 </div>
             </div>
@@ -219,10 +272,10 @@
             <div class="text-center mb-16">
                 <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-dark mb-4">我们的服务</h2>
                 <div class="w-20 h-1 bg-primary mx-auto mb-6"></div>
-                <p class="text-gray-600 max-w-2xl mx-auto">专注于无广告软件的全生命周期开发与维护，为您提供专业的技术解决方案</p>
+                <p class="text-gray-600 max-w-2xl mx-auto">专注于无广告软件的全生命周期开发，为您提供专业的技术解决方案</p>
             </div>
             
-            <div class="grid md:grid-cols-3 gap-8">
+            <div class="grid md:grid-cols-2 gap-8">
                 <!-- 服务卡片 1 -->
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover-lift">
                     <div class="h-48 bg-gradient-blue flex items-center justify-center">
@@ -240,7 +293,7 @@
                             </li>
                             <li class="flex items-center">
                                 <i class="fas fa-check text-green-500 mr-2"></i>
-                                <span class="text-gray-700">UI/UX 设计</span>
+                                <span class="text-gray-700">UI/UX设计</span>
                             </li>
                             <li class="flex items-center">
                                 <i class="fas fa-check text-green-500 mr-2"></i>
@@ -257,48 +310,17 @@
                 <!-- 服务卡片 2 -->
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover-lift">
                     <div class="h-48 bg-gradient-blue flex items-center justify-center">
-                        <i class="fas fa-mobile-alt text-5xl text-white"></i>
+                        <i class="fas fa-shield-alt text-5xl text-white"></i>
                     </div>
                     <div class="p-8">
-                        <h3 class="text-xl font-bold mb-4 text-primary">移动端应用优化</h3>
+                        <h3 class="text-xl font-bold mb-4 text-primary">软件安全与更新</h3>
                         <p class="text-gray-600 mb-6">
-                            针对移动端设备进行性能优化，确保软件在手机和平板上运行流畅，同时保持无广告的纯净体验。
+                            提供长期的软件安全维护和更新服务，修复漏洞、优化功能，让您的软件始终保持最佳状态。
                         </p>
                         <ul class="space-y-2 mb-6">
                             <li class="flex items-center">
                                 <i class="fas fa-check text-green-500 mr-2"></i>
-                                <span class="text-gray-700">移动适配与响应式设计</span>
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fas fa-check text-green-500 mr-2"></i>
-                                <span class="text-gray-700">性能优化与内存管理</span>
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fas fa-check text-green-500 mr-2"></i>
-                                <span class="text-gray-700">触控体验优化</span>
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fas fa-check text-green-500 mr-2"></i>
-                                <span class="text-gray-700">跨平台兼容性测试</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <!-- 服务卡片 3 -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover-lift">
-                    <div class="h-48 bg-gradient-blue flex items-center justify-center">
-                        <i class="fas fa-cogs text-5xl text-white"></i>
-                    </div>
-                    <div class="p-8">
-                        <h3 class="text-xl font-bold mb-4 text-primary">软件维护与更新</h3>
-                        <p class="text-gray-600 mb-6">
-                            提供长期的软件维护和更新服务，修复漏洞、优化功能，让您的软件始终保持最佳状态。
-                        </p>
-                        <ul class="space-y-2 mb-6">
-                            <li class="flex items-center">
-                                <i class="fas fa-check text-green-500 mr-2"></i>
-                                <span class="text-gray-700">漏洞修复与安全更新</span>
+                                <span class="text-gray-700">安全漏洞修复与更新</span>
                             </li>
                             <li class="flex items-center">
                                 <i class="fas fa-check text-green-500 mr-2"></i>
@@ -331,22 +353,23 @@
             <div class="max-w-3xl mx-auto">
                 <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover-lift">
                     <div class="relative">
-                        <img src="https://picsum.photos/1200/600?random=2" alt="小陈工作室镜像站" class="w-full h-64 object-cover">
+                        <!-- 使用固定图片链接，避免刷新时更换 -->
+                        <img src="https://picsum.photos/seed/project/1200/600" alt="小陈工作室软件" class="w-full h-64 object-cover" id="projectImage">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
                             <div class="p-6">
-                                <h3 class="text-2xl font-bold text-white">小陈工作室镜像站</h3>
-                                <p class="text-white/80">快速、稳定且无广告的资源镜像站</p>
+                                <h3 class="text-2xl font-bold text-white">纯净软件系列</h3>
+                                <p class="text-white/80">快速、稳定且无广告的应用程序</p>
                             </div>
                         </div>
                     </div>
                     <div class="p-8">
                         <div class="flex flex-wrap gap-3 mb-6">
-                            <span class="px-3 py-1 bg-blue-100 text-primary rounded-full text-sm">Web开发</span>
-                            <span class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm">资源管理</span>
-                            <span class="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-sm">无广告</span>
+                            <span class="px-3 py-1 bg-blue-100 text-primary rounded-full text-sm">软件开发</span>
+                            <span class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm">无广告</span>
+                            <span class="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-sm">性能优化</span>
                         </div>
                         <p class="text-gray-700 mb-6">
-                            小陈工作室镜像站是一个专注于提供各种软件资源的纯净下载平台。网站采用无广告设计，确保用户可以快速、安全地获取所需资源，无需担心广告干扰和恶意软件。
+                            小陈工作室开发的纯净软件系列，包括文件管理、系统工具、安全防护等多种类型的应用程序。所有软件均采用无广告设计，确保用户可以快速、安全地使用，无需担心广告干扰和恶意软件。
                         </p>
                         <div class="flex flex-wrap gap-4 mb-6">
                             <div class="flex items-center">
@@ -355,11 +378,11 @@
                             </div>
                             <div class="flex items-center">
                                 <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                                <span class="text-gray-700">高速下载服务</span>
+                                <span class="text-gray-700">兼容性优化</span>
                             </div>
                             <div class="flex items-center">
                                 <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                                <span class="text-gray-700">资源安全检测</span>
+                                <span class="text-gray-700">安全防护</span>
                             </div>
                         </div>
                         <a href="http://110.42.111.49:61723/" target="_blank" class="inline-block bg-primary text-white font-bold py-3 px-8 rounded-full hover:bg-secondary transition-all duration-300 hover-lift">
@@ -377,7 +400,7 @@
             <div class="text-center mb-16">
                 <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold mb-4">联系我们</h2>
                 <div class="w-20 h-1 bg-white mx-auto mb-6"></div>
-                <p class="text-white/80 max-w-2xl mx-auto">如果您有合作需求或任何疑问，欢迎通过以下方式联系我们</p>
+                <p class="text-white/80 max-w-2xl mx-auto">如果您有软件开发需求或任何疑问，欢迎通过以下方式联系我们</p>
             </div>
             
             <div class="max-w-md mx-auto text-center">
@@ -464,6 +487,80 @@
     </button>
 
     <script>
+        // 页面加载动画
+        const pageLoader = document.getElementById('pageLoader');
+        
+        // 图片预加载
+        function preloadImages() {
+            const images = [
+                'https://picsum.photos/seed/team/600/400',
+                'https://picsum.photos/seed/project/1200/600'
+            ];
+            
+            const imagePromises = images.map(src => {
+                return new Promise(resolve => {
+                    const img = new Image();
+                    img.onload = resolve;
+                    img.onerror = resolve; // 即使加载失败也继续
+                    img.src = src;
+                });
+            });
+            
+            return Promise.all(imagePromises);
+        }
+        
+        // 页面加载完成后执行
+        window.addEventListener('load', function() {
+            // 预加载图片
+            preloadImages().then(() => {
+                // 隐藏页面加载动画
+                setTimeout(() => {
+                    pageLoader.style.opacity = '0';
+                    setTimeout(() => {
+                        pageLoader.style.display = 'none';
+                    }, 500);
+                }, 800);
+                
+                // 固定图片不刷新
+                const teamImage = document.getElementById('teamImage');
+                const projectImage = document.getElementById('projectImage');
+                
+                // 使用sessionStorage存储图片URL，确保刷新时使用相同图片
+                if (!sessionStorage.getItem('teamImageUrl')) {
+                    sessionStorage.setItem('teamImageUrl', teamImage.src);
+                } else {
+                    teamImage.src = sessionStorage.getItem('teamImageUrl');
+                }
+                
+                if (!sessionStorage.getItem('projectImageUrl')) {
+                    sessionStorage.setItem('projectImageUrl', projectImage.src);
+                } else {
+                    projectImage.src = sessionStorage.getItem('projectImageUrl');
+                }
+            });
+        });
+
+        // 加载条动画
+        const loader = document.getElementById('loader');
+        let width = 0;
+        let interval = setInterval(frame, 20);
+        
+        function frame() {
+            if (width >= 100) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    loader.style.opacity = '0';
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                    }, 300);
+                }, 500);
+            } else {
+                width += Math.random() * 5;
+                if (width > 95) width = 95;
+                loader.style.width = width + '%';
+            }
+        }
+
         // 导航栏滚动效果
         const mainNav = document.getElementById('mainNav');
         window.addEventListener('scroll', function() {
