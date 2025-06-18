@@ -3,27 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小陈工作室 - 无广告软件开发专家</title>
-    <meta name="description" content="小陈工作室专注于无广告软件的开发与维护，提供纯净、高效的软件解决方案，打造无干扰的用户体验。">
-    <meta name="keywords" content="无广告软件, 软件开发, 纯净软件, 小陈工作室, 软件优化, 镜像站">
-    <meta name="author" content="小陈工作室">
-    <meta name="robots" content="index, follow">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>小陈工作室 - 无广告Windows软件开发者</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind 配置 -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#3b82f6',
-                        secondary: '#1e40af',
-                        accent: '#f59e0b',
-                        dark: '#1e293b',
-                        light: '#f8fafc'
+                        primary: '#165DFF',
+                        secondary: '#FF7D00',
+                        dark: '#1D2129',
+                        light: '#F2F3F5'
                     },
                     fontFamily: {
                         inter: ['Inter', 'sans-serif'],
@@ -32,623 +24,417 @@
             }
         }
     </script>
-    
     <style type="text/tailwindcss">
         @layer utilities {
             .content-auto {
                 content-visibility: auto;
             }
             .text-shadow {
-                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            }
-            .text-shadow-lg {
-                text-shadow: 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
             .bg-gradient-blue {
-                background: linear-gradient(135deg, #3b82f6, #1e40af);
+                background: linear-gradient(135deg, #165DFF 0%, #0040C9 100%);
             }
-            .bg-gradient-blue-light {
-                background: linear-gradient(135deg, #93c5fd, #60a5fa);
+            .transition-custom {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
-            .animate-float {
-                animation: float 6s ease-in-out infinite;
-            }
-            .animate-pulse-slow {
-                animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-            }
-            .animate-fade-in {
-                animation: fadeIn 0.8s ease-in-out;
-            }
-            .animate-slide-up {
-                animation: slideUp 0.8s ease-out;
-            }
-            .animate-scale {
-                transition: transform 0.3s ease;
-            }
-            .animate-scale:hover {
-                transform: scale(1.05);
-            }
-            .hover-lift {
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
-            }
-            .hover-lift:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-            }
-            .loading-bar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                height: 3px;
-                background-color: #3b82f6;
-                width: 0%;
-                z-index: 1000;
-                transition: width 0.3s ease;
-            }
-            .page-loading {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: #ffffff;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                z-index: 1000;
-                transition: opacity 0.5s ease;
-            }
-            .page-loading .loader-icon {
-                width: 60px;
-                height: 60px;
-                border: 6px solid #f3f3f3;
-                border-top: 6px solid #3b82f6;
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
-                margin-bottom: 20px;
-            }
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-        }
-        
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes slideUp {
-            from { 
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes loader {
-            0% { width: 0%; }
-            50% { width: 70%; }
-            100% { width: 100%; }
         }
     </style>
 </head>
-<body class="font-inter bg-light text-dark">
-    <!-- 页面加载动画 -->
-    <div id="pageLoader" class="page-loading">
-        <div class="loader-icon"></div>
-        <h3 class="text-primary font-bold text-xl">小陈工作室</h3>
-    </div>
-
-    <!-- 加载条 -->
-    <div id="loader" class="loading-bar"></div>
-
+<body class="font-inter bg-gray-50 text-dark">
     <!-- 导航栏 -->
-    <nav id="mainNav" class="fixed w-full z-50 transition-all duration-500 ease-in-out">
+    <header class="fixed w-full bg-white/90 backdrop-blur-sm shadow-sm z-50 transition-all duration-300" id="navbar">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold text-white text-shadow">小陈工作室</a>
-            <div class="hidden md:flex space-x-8">
-                <a href="#about" class="text-white hover:text-accent transition-all duration-300 font-medium">关于我们</a>
-                <a href="#services" class="text-white hover:text-accent transition-all duration-300 font-medium">服务项目</a>
-                <a href="#projects" class="text-white hover:text-accent transition-all duration-300 font-medium">项目案例</a>
-                <a href="#contact" class="text-white hover:text-accent transition-all duration-300 font-medium">联系我们</a>
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 rounded-lg bg-gradient-blue flex items-center justify-center">
+                    <span class="text-white font-bold text-xl">小陈</span>
+                </div>
+                <span class="text-xl font-bold text-dark">小陈工作室</span>
             </div>
-            <button class="md:hidden text-white focus:outline-none" id="menuBtn">
-                <i class="fas fa-bars text-2xl"></i>
-            </button>
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="#home" class="text-dark hover:text-primary transition-colors font-medium">首页</a>
+                <a href="#projects" class="text-dark hover:text-primary transition-colors font-medium">开源项目</a>
+                <a href="#about" class="text-dark hover:text-primary transition-colors font-medium">关于我们</a>
+                <a href="#contact" class="text-dark hover:text-primary transition-colors font-medium">联系我们</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <a href="https://github.com/xiaochenstudio" target="_blank" class="text-dark hover:text-primary transition-colors">
+                    <i class="fa fa-github text-xl"></i>
+                </a>
+                <button class="md:hidden text-dark hover:text-primary transition-colors" id="menu-toggle">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
         </div>
         <!-- 移动端菜单 -->
-        <div class="md:hidden hidden bg-white border-t shadow-lg" id="mobileMenu">
-            <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
-                <a href="#about" class="py-2 hover:bg-gray-100 px-3 rounded text-dark font-medium transition-colors">关于我们</a>
-                <a href="#services" class="py-2 hover:bg-gray-100 px-3 rounded text-dark font-medium transition-colors">服务项目</a>
-                <a href="#projects" class="py-2 hover:bg-gray-100 px-3 rounded text-dark font-medium transition-colors">项目案例</a>
-                <a href="#contact" class="py-2 hover:bg-gray-100 px-3 rounded text-dark font-medium transition-colors">联系我们</a>
+        <div class="md:hidden bg-white shadow-lg absolute w-full left-0 top-full transform -translate-y-full opacity-0 transition-all duration-300 pointer-events-none" id="mobile-menu">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-4">
+                <a href="#home" class="text-dark hover:text-primary transition-colors font-medium py-2">首页</a>
+                <a href="#projects" class="text-dark hover:text-primary transition-colors font-medium py-2">开源项目</a>
+                <a href="#about" class="text-dark hover:text-primary transition-colors font-medium py-2">关于我们</a>
+                <a href="#contact" class="text-dark hover:text-primary transition-colors font-medium py-2">联系我们</a>
             </div>
-        </div>
-    </nav>
-
-    <!-- 英雄区域 -->
-    <header class="relative bg-gradient-blue min-h-screen flex items-center justify-center overflow-hidden">
-        <!-- 背景装饰元素 -->
-        <div class="absolute inset-0 overflow-hidden">
-            <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-float"></div>
-            <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-white/10 rounded-full blur-3xl animate-float" style="animation-delay: -2s"></div>
-            <div class="absolute top-1/2 right-1/3 w-40 h-40 bg-white/10 rounded-full blur-2xl animate-float" style="animation-delay: -4s"></div>
-        </div>
-        
-        <div class="container mx-auto px-4 text-center relative z-10">
-            <div class="max-w-4xl mx-auto">
-                <h1 class="text-[clamp(2.5rem,5vw,4.5rem)] font-bold text-white text-shadow-lg mb-6 animate-fade-in">
-                    打造纯净无广告的<br>软件体验
-                </h1>
-                <p class="text-[clamp(1rem,2vw,1.5rem)] text-white/90 mb-10 max-w-2xl mx-auto animate-slide-up" style="animation-delay: 0.2s">
-                    小陈工作室专注于无广告软件开发，为用户提供简洁、高效、无干扰的软件解决方案
-                </p>
-                <div class="flex flex-col sm:flex-row justify-center gap-4 animate-slide-up" style="animation-delay: 0.4s">
-                    <a href="#services" class="bg-white text-primary font-bold py-3 px-8 rounded-full inline-block hover:bg-gray-100 transition-all duration-300 hover-lift">
-                        了解我们的服务 <i class="fas fa-arrow-down ml-2"></i>
-                    </a>
-                    <a href="#projects" class="bg-transparent border-2 border-white text-white font-bold py-3 px-8 rounded-full inline-block hover:bg-white/10 transition-all duration-300 hover-lift">
-                        查看项目案例 <i class="fas fa-briefcase ml-2"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 波浪分隔符 -->
-        <div class="absolute bottom-0 left-0 right-0">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" class="w-full h-auto">
-                <path fill="#f8fafc" fill-opacity="1" d="M0,64L60,69.3C120,75,240,85,360,80C480,75,600,53,720,48C840,43,960,53,1080,58.7C1200,64,1320,64,1380,64L1440,64L1440,120L1380,120C1320,120,1200,120,1080,120C960,120,840,120,720,120C600,120,480,120,360,120C240,120,120,120,60,120L0,120Z"></path>
-            </svg>
         </div>
     </header>
 
-    <!-- 关于我们 -->
-    <section id="about" class="py-20 bg-light">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-dark mb-4">关于小陈工作室</h2>
-                <div class="w-20 h-1 bg-primary mx-auto mb-6"></div>
-                <p class="text-gray-600 max-w-2xl mx-auto">我们是一支专注于无广告软件开发的团队，致力于为用户创造纯净、高效的数字体验</p>
-            </div>
-            
-            <div class="grid md:grid-cols-2 gap-16 items-center">
-                <div class="relative">
-                    <div class="absolute -top-4 -left-4 w-24 h-24 bg-primary/10 rounded-lg"></div>
-                    <div class="absolute -bottom-4 -right-4 w-24 h-24 bg-primary/10 rounded-lg"></div>
-                    <!-- 使用固定图片链接，避免刷新时更换 -->
-                    <img src="https://picsum.photos/seed/team/600/400" alt="小陈工作室团队" class="rounded-xl shadow-2xl relative z-10 animate-scale" id="teamImage">
-                </div>
-                <div>
-                    <h3 class="text-2xl font-bold mb-6 text-primary">我们的使命</h3>
-                    <p class="text-gray-700 mb-6 leading-relaxed">
-                        在当今软件广告泛滥的数字世界中，我们坚持为用户提供真正无广告、无弹窗的纯净软件。我们相信，好的软件应该以用户体验为核心，而不是被广告所干扰。
-                    </p>
-                    
-                    <div class="mb-8">
-                        <div class="flex items-center mb-4">
-                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4">
-                                <i class="fas fa-check text-primary"></i>
-                            </div>
-                            <span class="font-medium">100% 无广告体验</span>
-                        </div>
-                        <div class="flex items-center mb-4">
-                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4">
-                                <i class="fas fa-check text-primary"></i>
-                            </div>
-                            <span class="font-medium">性能优化</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4">
-                                <i class="fas fa-check text-primary"></i>
-                            </div>
-                            <span class="font-medium">持续更新维护</span>
-                        </div>
-                    </div>
-                    
-                    <h3 class="text-2xl font-bold mb-6 text-primary">我们的理念</h3>
-                    <p class="text-gray-700 leading-relaxed">
-                        简洁而不简单，高效而不冗余。我们注重软件的每一个细节，从界面设计到功能实现，都力求做到极致，让用户在使用软件过程中感受到流畅与便捷。
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 服务项目 -->
-    <section id="services" class="py-20 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-dark mb-4">我们的服务</h2>
-                <div class="w-20 h-1 bg-primary mx-auto mb-6"></div>
-                <p class="text-gray-600 max-w-2xl mx-auto">专注于无广告软件的全生命周期开发，为您提供专业的技术解决方案</p>
-            </div>
-            
-            <div class="grid md:grid-cols-2 gap-8">
-                <!-- 服务卡片 1 -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover-lift">
-                    <div class="h-48 bg-gradient-blue flex items-center justify-center">
-                        <i class="fas fa-code text-5xl text-white"></i>
-                    </div>
-                    <div class="p-8">
-                        <h3 class="text-xl font-bold mb-4 text-primary">无广告软件开发</h3>
-                        <p class="text-gray-600 mb-6">
-                            专注于开发完全无广告、无弹窗的纯净软件，从需求分析到产品上线，提供一站式开发服务。
+    <!-- 主内容区 -->
+    <main>
+        <!-- 英雄区 -->
+        <section id="home" class="pt-32 pb-20 md:pt-40 md:pb-32 bg-gradient-to-b from-blue-50 to-white">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/2 mb-10 md:mb-0">
+                        <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold leading-tight text-dark mb-6">
+                            欢迎来到 <span class="text-primary">小陈工作室</span>
+                        </h1>
+                        <p class="text-lg md:text-xl text-gray-600 mb-8 max-w-xl">
+                            我们专注于开发高质量、无广告的 Windows 软件，致力于为用户提供简洁、高效的使用体验。
                         </p>
-                        <ul class="space-y-2 mb-6">
-                            <li class="flex items-center">
-                                <i class="fas fa-check text-green-500 mr-2"></i>
-                                <span class="text-gray-700">需求分析与规划</span>
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fas fa-check text-green-500 mr-2"></i>
-                                <span class="text-gray-700">UI/UX设计</span>
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fas fa-check text-green-500 mr-2"></i>
-                                <span class="text-gray-700">核心功能开发</span>
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fas fa-check text-green-500 mr-2"></i>
-                                <span class="text-gray-700">质量测试与优化</span>
-                            </li>
-                        </ul>
+                        <div class="flex flex-wrap gap-4">
+                            <a href="#projects" class="px-8 py-3 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-custom transform hover:-translate-y-1">
+                                浏览项目
+                            </a>
+                            <a href="#contact" class="px-8 py-3 bg-white hover:bg-gray-50 text-primary border border-primary font-medium rounded-lg shadow-md hover:shadow-lg transition-custom transform hover:-translate-y-1">
+                                联系我们
+                            </a>
+                        </div>
                     </div>
-                </div>
-                
-                <!-- 服务卡片 2 -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover-lift">
-                    <div class="h-48 bg-gradient-blue flex items-center justify-center">
-                        <i class="fas fa-shield-alt text-5xl text-white"></i>
-                    </div>
-                    <div class="p-8">
-                        <h3 class="text-xl font-bold mb-4 text-primary">软件安全与更新</h3>
-                        <p class="text-gray-600 mb-6">
-                            提供长期的软件安全维护和更新服务，修复漏洞、优化功能，让您的软件始终保持最佳状态。
-                        </p>
-                        <ul class="space-y-2 mb-6">
-                            <li class="flex items-center">
-                                <i class="fas fa-check text-green-500 mr-2"></i>
-                                <span class="text-gray-700">安全漏洞修复与更新</span>
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fas fa-check text-green-500 mr-2"></i>
-                                <span class="text-gray-700">功能优化与性能提升</span>
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fas fa-check text-green-500 mr-2"></i>
-                                <span class="text-gray-700">用户反馈分析与改进</span>
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fas fa-check text-green-500 mr-2"></i>
-                                <span class="text-gray-700">技术支持与问题解答</span>
-                            </li>
-                        </ul>
+                    <div class="md:w-1/2 flex justify-center">
+                        <div class="relative">
+                            <div class="w-64 h-64 md:w-80 md:h-80 bg-gradient-blue rounded-2xl shadow-2xl overflow-hidden">
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="text-white text-center">
+                                        <i class="fa fa-code-fork text-6xl mb-4"></i>
+                                        <h3 class="text-xl font-bold mb-2">开源项目</h3>
+                                        <p class="opacity-90">高质量 · 无广告</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="absolute -bottom-5 -right-5 w-32 h-32 bg-secondary/20 rounded-full blur-2xl"></div>
+                            <div class="absolute -top-5 -left-5 w-32 h-32 bg-primary/20 rounded-full blur-2xl"></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- 项目案例 -->
-    <section id="projects" class="py-20 bg-light">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-dark mb-4">项目案例</h2>
-                <div class="w-20 h-1 bg-primary mx-auto mb-6"></div>
-                <p class="text-gray-600 max-w-2xl mx-auto">展示我们的经典项目，见证无广告软件的魅力</p>
+        <!-- 项目区 -->
+        <section id="projects" class="py-20 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-dark mb-4">我们的开源项目</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">探索我们精心打造的开源项目，每一个项目都致力于解决实际问题，提供高效、简洁的解决方案。</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-8 max-w-2xl mx-auto">
+                    <!-- 项目卡片1 -->
+                    <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-custom transform hover:-translate-y-1 overflow-hidden">
+                        <div class="p-6">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fa fa-windows text-primary text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3">MCTools</h3>
+                            <p class="text-gray-600 mb-4">使用Python轻量级编写的Minecraft工具，帮助玩家更轻松地管理和优化游戏体验。</p>
+                            <div class="flex items-center text-sm text-gray-500 mb-6">
+                                <span class="flex items-center mr-4">
+                                    <i class="fa fa-code mr-1"></i> Python
+                                </span>
+                                <span class="flex items-center">
+                                    <i class="fa fa-star mr-1"></i> 128
+                                </span>
+                            </div>
+                            <div class="flex space-x-3">
+                                <a href="https://github.com/xiaochenstudio/mctools" target="_blank" class="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary font-medium rounded-lg transition-colors">
+                                    查看源码
+                                </a>
+                                <a href="https://github.com/xiaochenstudio/mctools/releases" target="_blank" class="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg transition-colors">
+                                    下载软件
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <div class="max-w-3xl mx-auto">
-                <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover-lift">
+        </section>
+
+        <!-- 关于我们 -->
+        <section id="about" class="py-20 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-dark mb-4">关于我们</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">了解小陈工作室的故事、理念和目标，我们致力于提供高质量、无广告的软件解决方案。</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-6">我们的使命</h3>
+                        <p class="text-gray-600 mb-6">小陈工作室成立于2022年，由一群热爱编程的开发者组成。我们的使命是开发高质量、无广告的Windows软件，为用户提供简洁、高效的使用体验。</p>
+                        
+                        <div class="mb-8">
+                            <h4 class="text-xl font-semibold mb-3">我们的价值观</h4>
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
+                                    <span>用户至上：始终将用户体验放在首位</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
+                                    <span>简洁高效：追求代码和界面的简洁性</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
+                                    <span>开源共享：相信开源的力量，推动技术进步</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
+                                    <span>无广告承诺：所有软件产品均保证无广告干扰</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                     <div class="relative">
-                        <!-- 使用固定图片链接，避免刷新时更换 -->
-                        <img src="https://picsum.photos/seed/project/1200/600" alt="小陈工作室软件" class="w-full h-64 object-cover" id="projectImage">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-                            <div class="p-6">
-                                <h3 class="text-2xl font-bold text-white">纯净软件系列</h3>
-                                <p class="text-white/80">快速、稳定且无广告的应用程序</p>
+                        <div class="bg-white rounded-xl shadow-xl p-8 relative z-10">
+                            <div class="flex items-center mb-6">
+                                <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mr-4">
+                                    <i class="fa fa-code text-primary text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-bold">技术栈</h4>
+                                    <p class="text-gray-500">我们使用的主要技术</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-gray-50 rounded-lg p-4 flex items-center">
+                                    <i class="fa fa-windows text-blue-600 mr-3"></i>
+                                    <span>Windows开发</span>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-4 flex items-center">
+                                    <i class="fa fa-code text-orange-600 mr-3"></i>
+                                    <span>Python</span>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-4 flex items-center">
+                                    <i class="fa fa-code text-purple-600 mr-3"></i>
+                                    <span>C#</span>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-4 flex items-center">
+                                    <i class="fa fa-github text-gray-800 mr-3"></i>
+                                    <span>开源协作</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="p-8">
-                        <div class="flex flex-wrap gap-3 mb-6">
-                            <span class="px-3 py-1 bg-blue-100 text-primary rounded-full text-sm">软件开发</span>
-                            <span class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm">无广告</span>
-                            <span class="px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-sm">性能优化</span>
-                        </div>
-                        <p class="text-gray-700 mb-6">
-                            小陈工作室开发的纯净软件系列，包括文件管理、系统工具、安全防护等多种类型的应用程序。所有软件均采用无广告设计，确保用户可以快速、安全地使用，无需担心广告干扰和恶意软件。
-                        </p>
-                        <div class="flex flex-wrap gap-4 mb-6">
-                            <div class="flex items-center">
-                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                                <span class="text-gray-700">100% 无广告体验</span>
-                            </div>
-                            <div class="flex items-center">
-                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                                <span class="text-gray-700">兼容性优化</span>
-                            </div>
-                            <div class="flex items-center">
-                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                                <span class="text-gray-700">安全防护</span>
-                            </div>
-                        </div>
-                        <a href="http://110.42.111.49:61723/" target="_blank" class="inline-block bg-primary text-white font-bold py-3 px-8 rounded-full hover:bg-secondary transition-all duration-300 hover-lift">
-                            访问镜像站 <i class="fas fa-external-link-alt ml-2"></i>
-                        </a>
+                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary/10 rounded-2xl -z-10"></div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- 联系我们 -->
-    <section id="contact" class="py-20 bg-gradient-blue text-white">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold mb-4">联系我们</h2>
-                <div class="w-20 h-1 bg-white mx-auto mb-6"></div>
-                <p class="text-white/80 max-w-2xl mx-auto">如果您有软件开发需求或任何疑问，欢迎通过以下方式联系我们</p>
-            </div>
-            
-            <div class="max-w-md mx-auto text-center">
-                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-8 mb-8 hover-lift">
-                    <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-envelope text-2xl"></i>
+        <!-- 联系我们 -->
+        <section id="contact" class="py-20 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-dark mb-4">联系我们</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">我们很乐意听取您的建议、反馈或合作机会。请通过以下方式与我们联系。</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+                    <div class="bg-gray-50 rounded-xl p-8 shadow-lg">
+                        <h3 class="text-xl font-bold mb-6">联系方式</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                                    <i class="fa fa-envelope text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium">邮箱</h4>
+                                    <p class="text-gray-600">orange38665@qq.com</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                                    <i class="fa fa-github text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium">GitHub</h4>
+                                    <p class="text-gray-600">https://github.com/xiaochenstudio</p>
+                                </div>
+                            </li>
+                        </ul>
+
+                        <div class="mt-8">
+                            <h4 class="font-medium mb-4">关注我们</h4>
+                            <div class="flex space-x-4">
+                                <a href="#" class="w-10 h-10 rounded-full bg-primary/10 hover:bg-primary/20 flex items-center justify-center text-primary transition-colors">
+                                    <i class="fa fa-weibo"></i>
+                                </a>
+                                <a href="#" class="w-10 h-10 rounded-full bg-primary/10 hover:bg-primary/20 flex items-center justify-center text-primary transition-colors">
+                                    <i class="fa fa-wechat"></i>
+                                </a>
+                                <a href="#" class="w-10 h-10 rounded-full bg-primary/10 hover:bg-primary/20 flex items-center justify-center text-primary transition-colors">
+                                    <i class="fa fa-qq"></i>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-bold mb-4">邮箱联系</h3>
-                    <a href="mailto:orange38665@qq.com" class="text-white text-lg font-medium hover:text-accent transition-colors">
-                        orange38665@qq.com
-                    </a>
-                </div>
-                
-                <p class="text-white/70 mb-8">
-                    我们会在24小时内回复您的邮件，感谢您的关注与支持！
-                </p>
-                
-                <div class="flex justify-center space-x-4">
-                    <a href="#" class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300">
-                        <i class="fab fa-github text-xl"></i>
-                    </a>
-                    <a href="#" class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300">
-                        <i class="fab fa-gitlab text-xl"></i>
-                    </a>
-                    <a href="#" class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300">
-                        <i class="fab fa-qq text-xl"></i>
-                    </a>
+
+                    <div class="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
+                        <h3 class="text-xl font-bold mb-6">发送消息</h3>
+                        <form>
+                            <div class="mb-4">
+                                <label for="name" class="block text-gray-700 font-medium mb-2">姓名</label>
+                                <input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors" placeholder="请输入您的姓名">
+                            </div>
+                            <div class="mb-4">
+                                <label for="email" class="block text-gray-700 font-medium mb-2">邮箱</label>
+                                <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors" placeholder="请输入您的邮箱">
+                            </div>
+                            <div class="mb-6">
+                                <label for="message" class="block text-gray-700 font-medium mb-2">消息</label>
+                                <textarea id="message" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors" placeholder="请输入您的消息"></textarea>
+                            </div>
+                            <button type="submit" class="w-full px-6 py-3 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-custom transform hover:-translate-y-1">
+                                发送消息
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
     <!-- 页脚 -->
     <footer class="bg-dark text-white py-12">
         <div class="container mx-auto px-4">
-            <div class="grid md:grid-cols-3 gap-8 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
-                    <h3 class="text-xl font-bold mb-4">小陈工作室</h3>
-                    <p class="text-gray-400 mb-4">
-                        专注于无广告软件开发，为用户提供纯净、高效的软件体验。
-                    </p>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                            <span class="text-white font-bold text-xl">小陈</span>
+                        </div>
+                        <span class="text-xl font-bold text-white">小陈工作室</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">致力于开发高质量、无广告的Windows软件，为用户提供简洁、高效的使用体验。</p>
                     <div class="flex space-x-4">
                         <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                            <i class="fab fa-github"></i>
+                            <i class="fa fa-weibo"></i>
                         </a>
                         <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                            <i class="fab fa-gitlab"></i>
+                            <i class="fa fa-wechat"></i>
                         </a>
                         <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                            <i class="fab fa-qq"></i>
+                            <i class="fa fa-github"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fa fa-qq"></i>
                         </a>
                     </div>
                 </div>
+
                 <div>
-                    <h3 class="text-xl font-bold mb-4">快速链接</h3>
+                    <h4 class="text-lg font-bold mb-4">快速链接</h4>
                     <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-400 hover:text-white transition-colors">首页</a></li>
+                        <li><a href="#projects" class="text-gray-400 hover:text-white transition-colors">开源项目</a></li>
                         <li><a href="#about" class="text-gray-400 hover:text-white transition-colors">关于我们</a></li>
-                        <li><a href="#services" class="text-gray-400 hover:text-white transition-colors">服务项目</a></li>
-                        <li><a href="#projects" class="text-gray-400 hover:text-white transition-colors">项目案例</a></li>
                         <li><a href="#contact" class="text-gray-400 hover:text-white transition-colors">联系我们</a></li>
                     </ul>
                 </div>
+
                 <div>
-                    <h3 class="text-xl font-bold mb-4">联系方式</h3>
+                    <h4 class="text-lg font-bold mb-4">项目</h4>
+                    <ul class="space-y-2">
+                        <li><a href="https://github.com/xiaochenstudio/mctools" target="_blank" class="text-gray-400 hover:text-white transition-colors">MCTools</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-bold mb-4">联系我们</h4>
                     <ul class="space-y-2">
                         <li class="flex items-center">
-                            <i class="fas fa-envelope text-gray-400 mr-2"></i>
-                            <a href="mailto:orange38665@qq.com" class="text-gray-400 hover:text-white transition-colors">
-                                orange38665@qq.com
-                            </a>
+                            <i class="fa fa-envelope-o mr-2 text-gray-400"></i>
+                            <a href="mailto:orange38665@qq.com" class="text-gray-400 hover:text-white transition-colors">orange38665@qq.com</a>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa fa-github mr-2 text-gray-400"></i>
+                            <a href="https://github.com/xiaochenstudio" target="_blank" class="text-gray-400 hover:text-white transition-colors">GitHub</a>
                         </li>
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-gray-800 pt-8 text-center text-gray-500">
-                <p>&copy; 2025 小陈工作室. 保留所有权利.</p>
+
+            <div class="border-t border-gray-800 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm">© 2025 小陈工作室. 保留所有权利.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">隐私政策</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">服务条款</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Cookie政策</a>
+                </div>
             </div>
         </div>
     </footer>
 
-    <!-- 回到顶部按钮 -->
-    <button id="backToTop" class="fixed bottom-8 right-8 bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-secondary">
-        <i class="fas fa-arrow-up"></i>
-    </button>
-
     <script>
-        // 页面加载动画
-        const pageLoader = document.getElementById('pageLoader');
-        
-        // 图片预加载
-        function preloadImages() {
-            const images = [
-                'https://picsum.photos/seed/team/600/400',
-                'https://picsum.photos/seed/project/1200/600'
-            ];
-            
-            const imagePromises = images.map(src => {
-                return new Promise(resolve => {
-                    const img = new Image();
-                    img.onload = resolve;
-                    img.onerror = resolve; // 即使加载失败也继续
-                    img.src = src;
-                });
-            });
-            
-            return Promise.all(imagePromises);
-        }
-        
-        // 页面加载完成后执行
-        window.addEventListener('load', function() {
-            // 预加载图片
-            preloadImages().then(() => {
-                // 隐藏页面加载动画
-                setTimeout(() => {
-                    pageLoader.style.opacity = '0';
-                    setTimeout(() => {
-                        pageLoader.style.display = 'none';
-                    }, 500);
-                }, 800);
-                
-                // 固定图片不刷新
-                const teamImage = document.getElementById('teamImage');
-                const projectImage = document.getElementById('projectImage');
-                
-                // 使用sessionStorage存储图片URL，确保刷新时使用相同图片
-                if (!sessionStorage.getItem('teamImageUrl')) {
-                    sessionStorage.setItem('teamImageUrl', teamImage.src);
-                } else {
-                    teamImage.src = sessionStorage.getItem('teamImageUrl');
-                }
-                
-                if (!sessionStorage.getItem('projectImageUrl')) {
-                    sessionStorage.setItem('projectImageUrl', projectImage.src);
-                } else {
-                    projectImage.src = sessionStorage.getItem('projectImageUrl');
-                }
-            });
-        });
-
-        // 加载条动画
-        const loader = document.getElementById('loader');
-        let width = 0;
-        let interval = setInterval(frame, 20);
-        
-        function frame() {
-            if (width >= 100) {
-                clearInterval(interval);
-                setTimeout(() => {
-                    loader.style.opacity = '0';
-                    setTimeout(() => {
-                        loader.style.display = 'none';
-                    }, 300);
-                }, 500);
-            } else {
-                width += Math.random() * 5;
-                if (width > 95) width = 95;
-                loader.style.width = width + '%';
-            }
-        }
-
         // 导航栏滚动效果
-        const mainNav = document.getElementById('mainNav');
-        window.addEventListener('scroll', function() {
+        const navbar = document.getElementById('navbar');
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        let menuOpen = false;
+
+        window.addEventListener('scroll', () => {
             if (window.scrollY > 50) {
-                mainNav.classList.add('bg-white', 'shadow-md');
-                mainNav.classList.remove('bg-transparent');
-                mainNav.querySelectorAll('a').forEach(link => {
-                    link.classList.remove('text-white');
-                    link.classList.add('text-dark');
-                });
-                mainNav.querySelector('h1').classList.remove('text-white');
-                mainNav.querySelector('h1').classList.add('text-blue-600');
-                mainNav.querySelector('#menuBtn i').classList.remove('text-white');
-                mainNav.querySelector('#menuBtn i').classList.add('text-gray-600');
+                navbar.classList.add('py-2', 'shadow-md');
+                navbar.classList.remove('py-3', 'shadow-sm');
             } else {
-                mainNav.classList.remove('bg-white', 'shadow-md');
-                mainNav.classList.add('bg-transparent');
-                mainNav.querySelectorAll('a').forEach(link => {
-                    link.classList.add('text-white');
-                    link.classList.remove('text-dark');
-                });
-                mainNav.querySelector('h1').classList.add('text-white');
-                mainNav.querySelector('h1').classList.remove('text-blue-600');
-                mainNav.querySelector('#menuBtn i').classList.add('text-white');
-                mainNav.querySelector('#menuBtn i').classList.remove('text-gray-600');
+                navbar.classList.add('py-3', 'shadow-sm');
+                navbar.classList.remove('py-2', 'shadow-md');
             }
         });
 
-        // 移动端菜单切换
-        document.getElementById('menuBtn').addEventListener('click', function() {
-            document.getElementById('mobileMenu').classList.toggle('hidden');
+        // 移动端菜单
+        menuToggle.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            if (menuOpen) {
+                mobileMenu.classList.remove('-translate-y-full', 'opacity-0', 'pointer-events-none');
+                mobileMenu.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+                menuToggle.innerHTML = '<i class="fa fa-times text-xl"></i>';
+            } else {
+                mobileMenu.classList.add('-translate-y-full', 'opacity-0', 'pointer-events-none');
+                mobileMenu.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+                menuToggle.innerHTML = '<i class="fa fa-bars text-xl"></i>';
+            }
         });
 
         // 平滑滚动
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
+                
+                // 如果是移动端，点击后关闭菜单
+                if (menuOpen) {
+                    menuOpen = false;
+                    mobileMenu.classList.add('-translate-y-full', 'opacity-0', 'pointer-events-none');
+                    mobileMenu.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+                    menuToggle.innerHTML = '<i class="fa fa-bars text-xl"></i>';
+                }
+
                 const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
                 const targetElement = document.querySelector(targetId);
                 if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
+                    targetElement.scrollIntoView({
                         behavior: 'smooth'
                     });
-                    // 关闭移动菜单
-                    document.getElementById('mobileMenu').classList.add('hidden');
                 }
             });
         });
 
-        // 回到顶部按钮
-        const backToTopBtn = document.getElementById('backToTop');
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 300) {
-                backToTopBtn.classList.remove('opacity-0', 'invisible');
-                backToTopBtn.classList.add('opacity-100', 'visible');
-            } else {
-                backToTopBtn.classList.add('opacity-0', 'invisible');
-                backToTopBtn.classList.remove('opacity-100', 'visible');
-            }
+        // 表单提交
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('感谢您的留言！我们会尽快回复您。');
+            this.reset();
         });
-
-        backToTopBtn.addEventListener('click', function() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-
-        // 元素进入视口时的动画
-        const animateOnScroll = function() {
-            const elements = document.querySelectorAll('.card-hover, .hover-lift, section > div > div.text-center');
-            
-            elements.forEach(element => {
-                const elementPosition = element.getBoundingClientRect().top;
-                const screenPosition = window.innerHeight / 1.2;
-                
-                if (elementPosition < screenPosition) {
-                    element.classList.add('animate-fade-in');
-                }
-            });
-        };
-
-        // 初始检查
-        animateOnScroll();
-        
-        // 滚动时检查
-        window.addEventListener('scroll', animateOnScroll);
     </script>
 </body>
 </html>
+    
