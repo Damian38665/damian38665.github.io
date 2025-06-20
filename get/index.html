@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>兑换码查询系统</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .container { max-width: 600px; margin: 0 auto; }
+    .card { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 4px; }
+    input { width: 100%; padding: 10px; margin: 8px 0; box-sizing: border-box; }
+    button { background-color: #4CAF50; color: white; padding: 10px 15px; border: none; cursor: pointer; }
+    .hidden { display: none; }
+    .error { color: red; }
+    .success { color: green; }
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 15px;
+      border-radius: 4px;
+      color: white;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .notification.success { background-color: #4CAF50; }
+    .notification.error { background-color: #f44336; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>兑换码查询系统</h1>
+    
+    <div class="card">
+      <h3>查询兑换码</h3>
+      <input type="text" id="coupon-input" placeholder="请输入兑换码">
+      <button id="search-btn">查询</button>
+    </div>
+    
+    <div id="loading" class="card hidden">
+      <p>正在查询，请稍候...</p>
+    </div>
+    
+    <div id="result-section" class="card hidden">
+      <h3 id="product-name">商品名称</h3>
+      <p id="coupon-code">兑换码: <span></span></p>
+      <div id="product-details"></div>
+      <button id="copy-btn">复制兑换码</button>
+      <button id="reset-btn">重新查询</button>
+    </div>
+    
+    <div id="no-result" class="card hidden">
+      <p class="error">未找到该兑换码，请检查输入是否正确</p>
+    </div>
+    
+    <div id="error-section" class="card hidden">
+      <p id="error-message" class="error">查询失败，请稍后再试</p>
+    </div>
+  </div>
+
+  <div id="notification" class="notification hidden"></div>
+
+  <script>
+    // 示例数据
+    const exampleData = `
+ABC123:100元代金券:有效期至2025年12月31日，全场通用
+XYZ456:50元优惠券:满200元可用，仅限电子产品
+QWE789:免费配送:无门槛，单次使用
+`;
+    
+    let couponData = null;
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      loadData();
+      
+      document.getElementById('search-btn').addEventListener('click', searchCoupon);
+      document.getElementById('reset-btn').addEventListener('click', resetSearch);
+      document.getElementById('copy-btn').addEventListener('click', copyCoupon);
+    });
+    
+    function loadData() {
+      try {
+        couponData = parseCouponData(exampleData);
+        showNotification('数据加载成功', 'success');
+      } catch (error) {
+        showError('加载数据失败: ' + error.message);
+      }
+    }
+    
+    function parseCouponData(content) {
+      const lines = content.split('\n');
+      const coupons = {};
+      
+      lines.forEach(line => {
+        if (!line.trim()) return;
+        
+        const parts = line.split(':');
+        if (parts.length >= 3) {
+          coupons[parts[0].trim()] = {
+            code: parts[0].trim(),
+            name: parts[1].trim(),
+            details: parts.slice(2).join(':').trim()
+          };
+        }
+      });
+      
+      return coupons;
+    }
+    
+    function searchCoupon() {
+      const code = document.getElementById('coupon-input').value.trim();
+      
+      if (!code) {
+        showNotification('请输入兑换码', 'error');
+        return;
+      }
+      
+      hideAllSections();
+      document.getElementById('loading').classList.remove('hidden');
+      
+      setTimeout(() => {
+        document.getElementById('loading').classList.add('hidden');
+        
+        const result = couponData[code];
+        if (result) {
+          showResult(result);
+          showNotification('查询成功', 'success');
+        } else {
+          document.getElementById('no-result').classList.remove('hidden');
+          showNotification('未找到该兑换码', 'error');
+        }
+      }, 500);
+    }
+    
+    function showResult(result) {
+      document.getElementById('product-name').textContent = result.name;
+      document.getElementById('coupon-code').textContent = '兑换码: ' + result.code;
+      document.getElementById('product-details').textContent = result.details;
+      document.getElementById('result-section').classList.remove('hidden');
+    }
+    
+    function copyCoupon() {
+      const code = document.getElementById('coupon-input').value.trim();
+      navigator.clipboard.writeText(code)
+        .then(() => showNotification('兑换码已复制到剪贴板', 'success'))
+        .catch(err => showNotification('复制失败，请手动复制', 'error'));
+    }
+    
+    function resetSearch() {
+      document.getElementById('coupon-input').value = '';
+      hideAllSections();
+    }
+    
+    function hideAllSections() {
+      document.getElementById('result-section').classList.add('hidden');
+      document.getElementById('no-result').classList.add('hidden');
+      document.getElementById('error-section').classList.add('hidden');
+    }
+    
+    function showError(message) {
+      document.getElementById('error-message').textContent = message;
+      document.getElementById('error-section').classList.remove('hidden');
+    }
+    
+    function showNotification(message, type) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.className = `notification ${type}`;
+      notification.style.opacity = '1';
+      
+      setTimeout(() => {
+        notification.style.opacity = '0';
+      }, 3000);
+    }
+  </script>
+</body>
+</html>  
