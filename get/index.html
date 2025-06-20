@@ -9,7 +9,14 @@
     .container { max-width: 600px; margin: 0 auto; }
     .card { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 4px; }
     input { width: 100%; padding: 10px; margin: 8px 0; box-sizing: border-box; }
-    button { background-color: #4CAF50; color: white; padding: 10px 15px; border: none; cursor: pointer; }
+    button { 
+      background-color: #4CAF50; 
+      color: white; 
+      padding: 10px 15px; 
+      border: none; 
+      cursor: pointer; 
+      margin-right: 10px;
+    }
     .hidden { display: none; }
     .error { color: red; }
     .success { color: green; }
@@ -22,9 +29,11 @@
       color: white;
       opacity: 0;
       transition: opacity 0.3s;
+      z-index: 9999;
     }
     .notification.success { background-color: #4CAF50; }
     .notification.error { background-color: #f44336; }
+    #product-details { white-space: pre-line; }
   </style>
 </head>
 <body>
@@ -33,8 +42,9 @@
     
     <div class="card">
       <h3>查询兑换码</h3>
-      <input type="text" id="coupon-input" placeholder="请输入兑换码">
+      <input type="text" id="coupon-input" placeholder="请输入兑换码" />
       <button id="search-btn">查询</button>
+      <button id="refresh-btn">刷新数据</button>
     </div>
     
     <div id="loading" class="card hidden">
@@ -61,84 +71,129 @@
   <div id="notification" class="notification hidden"></div>
 
   <script>
-    // 示例数据
-    const exampleData = `
-ABC123:100元代金券:有效期至2025年12月31日，全场通用
-XYZ456:50元优惠券:满200元可用，仅限电子产品
-QWE789:免费配送:无门槛，单次使用
-`;
+    // Gitee 配置
+    const giteeConfig = {
+      username: 'damian2021',
+      repo: 'sever',
+      path: '兑奖数据.txt',
+      token: '643752d7fb5c0a61145eb848cd4ff788'
+    };
     
     let couponData = null;
     
     document.addEventListener('DOMContentLoaded', () => {
-      loadData();
+      loadDataFromGitee();
       
       document.getElementById('search-btn').addEventListener('click', searchCoupon);
       document.getElementById('reset-btn').addEventListener('click', resetSearch);
       document.getElementById('copy-btn').addEventListener('click', copyCoupon);
+      document.getElementById('refresh-btn').addEventListener('click', loadDataFromGitee);
     });
     
-    function loadData() {
+    // 从 Gitee 仓库加载数据（支持 HTML 内容）
+    async function loadDataFromGitee() {
+      showLoading(true);
+      hideAllSections();
+      
       try {
-        couponData = parseCouponData(exampleData);
-        showNotification('数据加载成功', 'success');
+        const response = await fetch(`https://gitee.com/api/v5/repos/${giteeConfig.username}/${giteeConfig.repo}/contents/${encodeURIComponent(giteeConfig.path)}`, {
+          headers: {
+            'Authorization': `token ${giteeConfig.token}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP 错误: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.content) {
+          if (data.type === 'dir') {
+            throw new Error('指定路径是一个目录，请提供文件路径');
+          }
+          throw new Error('未获取到文件内容');
+        }
+        
+        // 解码 Base64 内容并处理 HTML 转义
+        const content = decodeURIComponent(escape(atob(data.content)));
+        
+        if (content.trim() === '') {
+          throw new Error('文件内容为空');
+        }
+        
+        couponData = parseCouponData(content);
+        showNotification(`数据加载成功，解析出 ${Object.keys(couponData).length} 条记录`, 'success');
       } catch (error) {
-        showError('加载数据失败: ' + error.message);
+        showError(`加载数据失败: ${error.message}`);
+      } finally {
+        showLoading(false);
       }
     }
     
+    // 解析兑换码数据（支持 HTML 内容）
     function parseCouponData(content) {
       const lines = content.split('\n');
       const coupons = {};
       
-      lines.forEach(line => {
-        if (!line.trim()) return;
+      lines.forEach((line, index) => {
+        const trimmedLine = line.trim();
+        if (!trimmedLine || trimmedLine.startsWith('#')) return;
         
-        const parts = line.split(':');
+        const parts = trimmedLine.split('::'); // 改用 :: 分隔（避免内容含 : 冲突）
         if (parts.length >= 3) {
-          coupons[parts[0].trim()] = {
-            code: parts[0].trim(),
-            name: parts[1].trim(),
-            details: parts.slice(2).join(':').trim()
+          const code = parts[0].trim();
+          const name = parts[1].trim();
+          const details = parts.slice(2).join('::').trim(); // 保留原始格式
+          
+          coupons[code] = { 
+            code, 
+            name, 
+            details: details.replace(/\\n/g, '<br>') // 处理换行符转 HTML
           };
+        } else {
+          console.warn(`行 ${index+1} 格式错误: ${trimmedLine}`);
         }
       });
-      
       return coupons;
     }
     
+    // 查询兑换码
     function searchCoupon() {
       const code = document.getElementById('coupon-input').value.trim();
-      
       if (!code) {
         showNotification('请输入兑换码', 'error');
         return;
       }
-      
+      if (!couponData) {
+        showError('数据未加载，请先刷新数据');
+        return;
+      }
+      showLoading(true);
       hideAllSections();
-      document.getElementById('loading').classList.remove('hidden');
       
       setTimeout(() => {
-        document.getElementById('loading').classList.add('hidden');
-        
+        showLoading(false);
         const result = couponData[code];
         if (result) {
           showResult(result);
-          showNotification('查询成功', 'success');
+          showNotification(`查询成功: ${result.name}`, 'success');
         } else {
           document.getElementById('no-result').classList.remove('hidden');
-          showNotification('未找到该兑换码', 'error');
+          showNotification('未找到该兑换码，请检查输入', 'error');
         }
-      }, 500);
+      }, 300);
     }
     
+    // 显示查询结果（支持 HTML 渲染）
     function showResult(result) {
       document.getElementById('product-name').textContent = result.name;
-      document.getElementById('coupon-code').textContent = '兑换码: ' + result.code;
-      document.getElementById('product-details').textContent = result.details;
+      document.getElementById('coupon-code').textContent = `兑换码: ${result.code}`;
+      document.getElementById('product-details').innerHTML = result.details; // 用 innerHTML 渲染 HTML
       document.getElementById('result-section').classList.remove('hidden');
     }
     
+    // 复制兑换码
     function copyCoupon() {
       const code = document.getElementById('coupon-input').value.trim();
       navigator.clipboard.writeText(code)
@@ -146,32 +201,40 @@ QWE789:免费配送:无门槛，单次使用
         .catch(err => showNotification('复制失败，请手动复制', 'error'));
     }
     
+    // 重置查询
     function resetSearch() {
       document.getElementById('coupon-input').value = '';
       hideAllSections();
     }
     
+    // 隐藏所有结果区
     function hideAllSections() {
       document.getElementById('result-section').classList.add('hidden');
       document.getElementById('no-result').classList.add('hidden');
       document.getElementById('error-section').classList.add('hidden');
     }
     
+    // 显示错误信息
     function showError(message) {
       document.getElementById('error-message').textContent = message;
       document.getElementById('error-section').classList.remove('hidden');
     }
     
+    // 显示加载状态
+    function showLoading(show) {
+      document.getElementById('loading').classList.toggle('hidden', !show);
+    }
+    
+    // 通知提示
     function showNotification(message, type) {
       const notification = document.getElementById('notification');
       notification.textContent = message;
       notification.className = `notification ${type}`;
       notification.style.opacity = '1';
-      
       setTimeout(() => {
         notification.style.opacity = '0';
       }, 3000);
     }
   </script>
 </body>
-</html>  
+</html>
